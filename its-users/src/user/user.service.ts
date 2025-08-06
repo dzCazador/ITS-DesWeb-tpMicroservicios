@@ -29,7 +29,7 @@ export class UserService {
 
   async findOne(id: number) {
     try {
-      const user = await this.prisma.user.findFirst({ where: { id } });
+      const user = await this.prisma.user.findUnique({ where: { id } });
 
       if (!user) {
         throw new RpcException({

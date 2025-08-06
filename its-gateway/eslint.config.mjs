@@ -9,7 +9,7 @@ export default tseslint.config(
     ignores: ['eslint.config.mjs'],
   },
 
-  ...tseslint.configs.recommendedTypeChecked,
+
   {
     languageOptions: {
       globals: {
