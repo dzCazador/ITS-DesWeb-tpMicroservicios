@@ -9,6 +9,7 @@ interface EnvVars {
   GATEWAY_HOST: string;
   GATEWAY_PORT: number;
   DATABASE_URL: string;
+  SECRET_KEY: string;
 }
 
 const envsSchema = joi
@@ -18,6 +19,7 @@ const envsSchema = joi
     GATEWAY_HOST: joi.string().required(),
     GATEWAY_PORT: joi.number().required(),
     DATABASE_URL: joi.string().required(),
+    SECRET_KEY: joi.string().required(),
   })
   .unknown(true);
 
@@ -33,4 +35,5 @@ export const envs = {
   GATEWAY_HOST: envVars.GATEWAY_HOST,
   GATEWAY_PORT: envVars.GATEWAY_PORT,
   DATABASE_URL: envVars.DATABASE_URL,
+  secredKey:envVars.SECRET_KEY,
 };

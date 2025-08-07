@@ -1,8 +1,8 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-//import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto, LoginDto,UpdateUserDto } from './dto';
+
 
 @Controller()
 export class UserController {
@@ -22,6 +22,11 @@ export class UserController {
   findAll() {
     return this.userService.findAll();
   }
+
+  login(@Body() loginUserDto: LoginDto) {
+    return this.userService.login(loginUserDto);
+  }
+
 
   /*
 

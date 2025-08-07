@@ -1,9 +1,12 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateUserDto } from './create-user.dto';
-import { IsInt, IsPositive } from 'class-validator';
+import {IsNumber, IsPositive,IsOptional} from 'class-validator'
+import {Type} from 'class-transformer'
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {
-  @IsInt({ message: 'El id debe ser un número entero' }) // Valida que sea un entero
-  @IsPositive({ message: 'El id debe ser un número positivo' }) // Valida que sea positivo
-  id: number;
+    @IsNumber() //Es un numero
+    @IsPositive() // Positovo
+    @IsOptional() // Opcional
+    @Type(() => Number)
+    id?: number;
 }

@@ -4,13 +4,7 @@ import { catchError } from 'rxjs';
 import { MS_USER } from 'src/common/constants/user-ms.constant';
 import { RpcResponse } from 'src/common/models/rpc.model';
 import { CreateUserDto } from './dto/create-user.dto';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBody,
-  ApiParam,
-} from '@nestjs/swagger';
+import {ApiTags,ApiOperation,ApiResponse,ApiBody,ApiParam} from '@nestjs/swagger';
 
 @ApiTags('Usuarios') 
 @Controller('user')
