@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
-
 import { InvoiceController } from './invoice.controller';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { MS_INVOICE } from 'src/common/constants';
+import { envs } from 'src/config';
 
 @Module({
   controllers: [InvoiceController],

@@ -1,5 +1,5 @@
-import { Controller } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { Controller, Inject } from '@nestjs/common';
+import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { MS_PRODUCT } from 'src/common/constants';
@@ -7,7 +7,7 @@ import { MS_PRODUCT } from 'src/common/constants';
 @Controller()
 export class ProductController {
   constructor(@Inject(MS_PRODUCT) private readonly productClient: ClientProxy) {}
-
+/*
   @MessagePattern('createProduct')
   create(@Payload() createProductDto: CreateProductDto) {
     return this.productService.create(createProductDto);
@@ -31,5 +31,5 @@ export class ProductController {
   @MessagePattern('removeProduct')
   remove(@Payload() id: number) {
     return this.productService.remove(id);
-  }
+  } */
 }
