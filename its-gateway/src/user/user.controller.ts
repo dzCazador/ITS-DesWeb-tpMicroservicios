@@ -1,7 +1,7 @@
 import {Controller,Post,Get,Body,Param,Patch,Delete,Inject,HttpException} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { catchError } from 'rxjs';
-import { MS_USER } from 'src/common/constants/user-ms.constant';
+import { MS_USER } from 'src/common/constants';
 import { RpcResponse } from 'src/common/models/rpc.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import {ApiTags,ApiOperation,ApiResponse,ApiBody,ApiParam} from '@nestjs/swagger';

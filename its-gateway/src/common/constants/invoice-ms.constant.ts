@@ -1,0 +1,1 @@
+export const MS_INVOICE = 'MS_INVOICE';
