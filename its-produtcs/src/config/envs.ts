@@ -4,6 +4,7 @@ import * as joi from 'joi';
 dotenv.config();
 
 interface EnvVars {
+    HOST: string;
     PORT: number;
     DB_HOST: string;
     DB_PORT: number;    
@@ -14,14 +15,14 @@ interface EnvVars {
 }
 
 const envsSchema = joi.object({
+    HOST: joi.string().required(),
+    PORT: joi.number().required(),
     DB_HOST: joi.string().required(),
     DB_PORT: joi.number().required(),
     DB_USER: joi.string().required(),
     DB_PASSWORD: joi.string().required(),
     DATABASE: joi.string().required(),
     SYNC: joi.boolean().required(),
-
-   
 
 }).unknown(true);
 
@@ -32,6 +33,7 @@ if (error) throw new Error (`Config validation error: ${error.message}`);
 const envVars: EnvVars = value;
 
 export const envs = {
+    HOST: envVars.HOST,
     PORT: envVars.PORT,
     DB_HOST: envVars.DB_HOST,
     DB_PORT: envVars.DB_PORT,

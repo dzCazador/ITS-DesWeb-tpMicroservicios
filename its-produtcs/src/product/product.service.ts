@@ -1,20 +1,31 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { RpcException } from '@nestjs/microservices';
+import { RpcResponse } from 'src/common/models/rpc.model';
 
 @Injectable()
 export class ProductService {
   constructor(
-    @Inject('PRODUCT_REPOSITORY')
-    private productRepository: Repository<Product>,
+    @InjectRepository(Product)
+    private readonly productRepository: Repository<Product>,
   ) {}
 
 
-  create(createProductDto: CreateProductDto) {
-    const product = this.productRepository.create(createProductDto);
-    return this.productRepository.save(product);
+  create(createProduct: CreateProductDto) {
+    console.log('Creating product:', createProduct);
+    try {
+      const product = this.productRepository.create(createProduct);
+      return this.productRepository.save(product);
+    } catch (error) {
+      throw new RpcException({
+        error: error.message || 'Unexpected error',
+        statusCode: 500,
+      } as RpcResponse);
+    }
   }
 
   findAll() {
@@ -23,12 +34,38 @@ export class ProductService {
     )
   }
 
-  findOne(id: number) {
-    return this.productRepository.findOne({ where: { id } });
+  
+  async findOne(id: number) {
+    try {
+      const product = await this.productRepository.findOne({ where: { id } });
+      if (!product) {
+        throw new RpcException({
+          error: 'Product not found',
+          statusCode: 404,
+        } as RpcResponse);
+      }
+
+    return product;
+    } catch (error) {
+      throw new RpcException({
+        error: error.message || 'Unexpected error',
+        statusCode: 500,
+      } as RpcResponse);
+    }
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return this.productRepository.update(id, updateProductDto);
+  
+  async update(id: number, updateProductDto: UpdateProductDto) {
+    try {
+      const product = await this.findOne(id);
+      Object.assign(product, updateProductDto);
+      return await this.productRepository.save(product);
+    } catch (err) {
+      throw new RpcException({
+        error: err.message || 'Unexpected error',
+        statusCode: 500,
+      } as RpcResponse);
+    }
   }
 
   remove(id: number) {

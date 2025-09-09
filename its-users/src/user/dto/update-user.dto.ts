@@ -6,7 +6,7 @@ import {Type} from 'class-transformer'
 export class UpdateUserDto extends PartialType(CreateUserDto) {
     @IsNumber() //Es un numero
     @IsPositive() // Positovo
-    @IsOptional() // Opcional
     @Type(() => Number)
-    id?: number;
+    @IsOptional() // Opcional
+    id: number;
 }

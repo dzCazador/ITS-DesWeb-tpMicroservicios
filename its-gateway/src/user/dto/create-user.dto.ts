@@ -10,11 +10,6 @@ export class CreateUserDto {
   @Transform(({ value }) => value.trim())
   name: string;
 
-  @ApiProperty({ example: 'jperez' })
-  @IsString()
-  @IsNotEmpty()
-  @Transform(({ value }) => value.trim())
-  username: string;
 
   @ApiProperty({ example: 'mail@mail.com' })
   @IsEmail()

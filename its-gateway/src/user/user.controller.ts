@@ -1,16 +1,20 @@
-import {Controller,Post,Get,Body,Param,Patch,Delete,Inject,HttpException} from '@nestjs/common';
+import {Controller,Post,Get,Body,Param,Patch,Delete,Inject,HttpException, Put} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { catchError } from 'rxjs';
 import { MS_USER } from 'src/common/constants';
 import { RpcResponse } from 'src/common/models/rpc.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import {ApiTags,ApiOperation,ApiResponse,ApiBody,ApiParam} from '@nestjs/swagger';
+import { Public, User } from 'src/common/decorators';
+
+
 
 @ApiTags('Usuarios') 
 @Controller('user')
 export class UserController {
   constructor(@Inject(MS_USER) private readonly userClient: ClientProxy) {}
 
+  @Public()
   @Post()
   @ApiOperation({ summary: 'Crear Usuario' })
   @ApiResponse({ status: 201, description: 'Usuario Creado' })
@@ -53,4 +57,30 @@ export class UserController {
     );
   }
 
+  @Patch(':id')
+  @ApiOperation({ summary: 'Actualizar Usuario' })
+  @ApiResponse({ status: 200, description: 'Usuario Actualizado' })
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  @ApiBody({ type: CreateUserDto })
+  update(@Param('id') id: number,@Body() updateUser) {
+      return this.userClient.send({ users: 'update' }, { id, updateUser }).pipe(
+      catchError((rpcError: RpcResponse) => {
+        const { statusCode = 500, error } = rpcError;
+        throw new HttpException(error ?? rpcError, statusCode);
+      }),
+    );
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Eliminar Usuario' })
+  @ApiResponse({ status: 200, description: 'Usuario Eliminado' }) 
+  @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
+  remove(@Param('id') id: number) {
+    return this.userClient.send({ users: 'removeupdate' }, id).pipe(
+      catchError((rpcError: RpcResponse) => {
+        const { statusCode = 500, error } = rpcError;
+        throw new HttpException(error ?? rpcError, statusCode);
+      }),
+    );
+  }
 }

@@ -4,23 +4,29 @@ import { CreateUserDto, LoginDto,UpdateUserDto} from './dto';
 import { RpcException } from '@nestjs/microservices';
 import { RpcResponse } from 'src/common/models/rpc.model';
 import { AuthService } from './auth/auth.service';
+import { PayloadInterface } from 'src/common';
+
+
 
 @Injectable()
 export class UserService {
 
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly auth: AuthService
+    private readonly authService: AuthService
   ){}
 
   // Método para crear un nuevo usuario
   // Este método recibe un DTO con los datos del usuario y lo guarda en la base de datos.
   // Si el usuario ya existe (por ejemplo, si el email es único), lanza una excepción.
-  async create(createUserDto: CreateUserDto) {
+  async create(createUser: CreateUserDto) {
     try {
-      const newUser = await this.prismaService.user.create({ data: createUserDto });
+      const hashedPassword = await this.authService.hashPassword(createUser.password);
+      createUser.password = hashedPassword;
+      const newUser = await this.prismaService.user.create({ data: createUser });
       return newUser;
     } catch (error) {
+      console.error('Error creating user:', error);
       if (error.code === 'P2002') {
         throw new RpcException({
           error: 'NO SE PERMITEN VALORES DUPLICADOS (UNIQUE KEY)',
@@ -33,17 +39,34 @@ export class UserService {
   // Método para buscar un usuario por email
   // Este método utiliza Prisma para buscar un usuario en la base de datos por su email.  
   async findByEmail(email: string) {
-    return this.prismaService.user.findUnique({
+   
+    try {
+      const user = await this.prismaService.user.findUnique({
       where: { email },
     });
-  }
+      if (!user) {
+        throw new RpcException({
+          error: 'Usuario no encontrado',
+          statusCode: 404,
+        } as RpcResponse);
+      }
 
+    return {
+        sub: user.id,
+        email: user.email,
+      } as PayloadInterface;
+    } catch (error) {
+      throw new RpcException({
+        error: error.message || 'Unexpected error',
+        statusCode: 500,
+      } as RpcResponse);
+    }
+  }
   // Método para buscar un usuario por ID
   // Este método utiliza Prisma para buscar un usuario en la base de datos por su ID. 
   async findOne(id: number) {
     try {
       const user = await this.prismaService.user.findUnique({ where: { id } });
-
       if (!user) {
         throw new RpcException({
           error: 'User not found',
@@ -51,7 +74,10 @@ export class UserService {
         } as RpcResponse);
       }
 
-      return user;
+    return {
+        sub: user.id,
+        email: user.email,
+      } as PayloadInterface;
     } catch (error) {
       throw new RpcException({
         error: error.message || 'Unexpected error',
@@ -74,21 +100,29 @@ export class UserService {
   // El usuario se devuelve sin la contraseña.
   // Si las credenciales son correctas, devuelve un objeto con el token y el usuario.
   // Si las credenciales son incorrectas, lanza una excepción de UnauthorizedException. 
-  async login(credential: LoginDto) {
+  async login(credential: LoginDto): Promise<PayloadInterface> {
     // Desestructuramos el Objeto
     const {email, password} = credential
     // Buscamos el usuario
     const user = await this.prismaService.user.findFirst({where: {email}})
     //Si no lo encuentra responde no encontrado
-    if (!user) throw new UnauthorizedException('Usuario no Encontrado')
+
+    //cambiar el codigo para retorne una rcpexception
+    if (!user) throw new RpcException({
+      error: 'Usuario no encontrado',
+      statusCode: 404,
+    } as RpcResponse);
+
     //Comparamos password si no coincide responde Password Incorrecta
-    const passwordOk = await this.auth.passwordCompare(password, user.password)
-    if (!passwordOk) throw new UnauthorizedException('Password Incorrecta')
-    // creamos el JWT a partir del usuario
-    const token = this.auth.createJWT(user)
-    // Crear una copia del usuario sin la contraseña
-    const { password: _password, ...userWithoutPassword } = user
-    return {token, user: userWithoutPassword}
+    const passwordOk = await this.authService.passwordCompare(password, user.password)
+    if (!passwordOk) throw new RpcException({
+      error: 'Password Incorrecta',
+      statusCode: 401,
+    } as RpcResponse);
+    return {
+      sub: user.id,
+      email: user.email,
+    } as PayloadInterface;
   }
 
   // Método para registrar un nuevo usuario
@@ -105,7 +139,7 @@ export class UserService {
     const user = await this.prismaService.user.findFirst({where: {email}})
     if (user) throw new BadRequestException('El correo ya está registrado')
     // Hasheamos la contraseña
-    const hashedPassword = await this.auth.hashPassword(password)
+    const hashedPassword = await this.authService.hashPassword(password)
     // Creamos el usuario
     const newUser = await this.prismaService.user.create({
       data: {...createUserDto, password: hashedPassword}
@@ -115,13 +149,41 @@ export class UserService {
     return userWithoutPassword;
   }
 
-  /*
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  // Método para actualizar un usuario
+  async update(id: number , updateUser: UpdateUserDto) {
+    const user = await this.prismaService.user.findUnique({ where: { id } });
+    if (!user) {
+      throw new RpcException({
+        error: 'User not found',
+        statusCode: 404,
+      } as RpcResponse);
+    }
+    if (updateUser.password) {
+      updateUser.password = await this.authService.hashPassword(updateUser.password);
+    }
+    return this.prismaService.user.update({
+      where: { id },
+      data: updateUser,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  } */
+  async remove(id: number) {
+    try {
+      const user = await this.prismaService.user.findUnique({ where: { id } });
+      if (!user) {
+        throw new RpcException({
+          error: 'Usuario no encontrado',
+          statusCode: 404,
+        } as RpcResponse);
+      }
+
+      return this.prismaService.user.update({ where: { id }, data: { isActive: false } });
+    } catch (err) {
+      throw new RpcException({
+        error: err.message || 'Error al eliminar el usuario',
+        statusCode: 500,
+      } as RpcResponse);
+    }
+  }
 }

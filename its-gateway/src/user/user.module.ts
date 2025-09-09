@@ -3,6 +3,7 @@ import { UserController } from './user.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { MS_USER } from 'src/common/constants/user-ms.constant';
 import { envs } from 'src/config/envs';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   controllers: [UserController],
@@ -17,6 +18,7 @@ import { envs } from 'src/config/envs';
         },
       },
     ]),
+    AuthModule,
   ],
 })
 export class UserModule {}

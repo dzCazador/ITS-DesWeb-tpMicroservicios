@@ -1,5 +1,5 @@
 
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 @Entity()
 export class Product {
@@ -9,13 +9,13 @@ export class Product {
   @Column({ length: 500 })
   name: string;
 
-  @Column()
+  @Column('decimal', { precision: 10, scale: 2 })
   price: number;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
   
   @Column({ type: 'timestamp', nullable: true })

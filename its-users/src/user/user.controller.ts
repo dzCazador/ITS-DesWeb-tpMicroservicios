@@ -23,21 +23,25 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @MessagePattern({ users: 'login' })
   login(@Body() loginUserDto: LoginDto) {
     return this.userService.login(loginUserDto);
   }
 
 
-  /*
-
-  @MessagePattern('updateUser')
-  update(@Payload() updateUserDto: UpdateUserDto) {
-    return this.userService.update(updateUserDto.id, updateUserDto);
+  @MessagePattern({ users: 'update' })
+  update(@Payload() data: { id: number; updateUser: UpdateUserDto }) {
+      const { id, updateUser } = data;
+      if (typeof id !== 'number') {
+        throw new Error('El campo id es obligatorio y debe ser un número');
+      }
+      return this.userService.update(id, updateUser);
   }
 
-  @MessagePattern('removeUser')
+
+  @MessagePattern({ users: 'remove' })
   remove(@Payload() id: number) {
     return this.userService.remove(id);
   }
-    */
+    
 }
