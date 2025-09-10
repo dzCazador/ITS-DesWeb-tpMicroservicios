@@ -5,10 +5,11 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { envs } from 'src/config/envs';
 import { MS_USER } from '../../common/constants';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, JwtStrategy],
   imports: [
     JwtModule.register({
       secret: envs.SECRET,

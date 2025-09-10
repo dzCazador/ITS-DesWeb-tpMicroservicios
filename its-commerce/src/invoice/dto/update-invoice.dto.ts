@@ -1,8 +1,5 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreateInvoiceDto } from './';
-import { IsOptional } from 'class-validator';
+import { CreateInvoiceDto } from './create-invoice.dto';
 
 export class UpdateInvoiceDto extends PartialType(CreateInvoiceDto) {
-  @IsOptional()
-  id: number;
 }

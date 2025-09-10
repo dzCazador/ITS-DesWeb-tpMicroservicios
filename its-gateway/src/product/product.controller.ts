@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, Inject, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Inject, Param, Patch, Post, Put } from '@nestjs/common';
 import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
 import { MS_PRODUCT } from 'src/common/constants';
 import { ApiOperation, ApiResponse, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
@@ -53,7 +53,7 @@ export class ProductController {
     );
   }
 
-  @Patch(':id')
+  @Put(':id')
   @ApiOperation({ summary: 'Actualizar Producto por ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Producto actualizado' })

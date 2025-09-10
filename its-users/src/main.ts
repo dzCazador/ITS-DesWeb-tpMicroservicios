@@ -19,6 +19,7 @@ async function bootstrap() {
       },
     },
   );
+  
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   const config = new DocumentBuilder()
     .setTitle('Microservicio de Usuarios')
@@ -29,7 +30,7 @@ async function bootstrap() {
   //const document = SwaggerModule.createDocument(app, config);
   //SwaggerModule.setup('api', app, document);
   //app.enableShutdownHooks();
-  logger.log(`Microservicio escuchando desde le puerto: ${envs.PORT}`);
   await app.listen();
+  logger.log(`Microservicio de usuarios escuchando desde le puerto: ${envs.PORT}`);
 }
 bootstrap();

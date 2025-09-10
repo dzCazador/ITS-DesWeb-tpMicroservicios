@@ -77,6 +77,8 @@ export class UserService {
     return {
         sub: user.id,
         email: user.email,
+        id: user.id,
+        name: user.name
       } as PayloadInterface;
     } catch (error) {
       throw new RpcException({

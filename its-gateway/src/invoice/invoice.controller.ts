@@ -1,24 +1,27 @@
-import { Body, Controller, Get, HttpException, Inject, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, Inject, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
 import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
-import { CreateInvoiceDto } from './dto/create-invoice.dto';
-import { UpdateInvoiceDto } from './dto/update-invoice.dto';
-import { MS_INVOICE } from 'src/common/constants';
-import { ApiOperation, ApiResponse, ApiBody, ApiParam } from '@nestjs/swagger';
-import { catchError } from 'rxjs';
+import { CreateInvoiceDto,UpdateInvoiceDto } from './dto';
+import { MS_INVOICE, MS_PRODUCT, MS_USER } from 'src/common/constants';
+import { ApiOperation, ApiResponse, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
+import { catchError, firstValueFrom } from 'rxjs';
 import { RpcResponse } from 'src/common/models/rpc.model';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { string } from 'joi';
+import { AuthGuard } from '@nestjs/passport';
 
-@Controller()
+@ApiTags('Invoices') 
+@Controller('invoice')
 export class InvoiceController {
-  constructor(@Inject(MS_INVOICE) private readonly invoiceClient: ClientProxy) {}
+  constructor(@Inject(MS_INVOICE) private readonly invoiceClient: ClientProxy,
+              @Inject(MS_PRODUCT) private readonly productClient: ClientProxy,
+              @Inject(MS_USER) private readonly userClient:ClientProxy ) {}
 
+  //@UseGuards(AuthGuard('jwt'))
   @Post()
   @ApiOperation({ summary: 'Crear Factura' })
   @ApiResponse({ status: 201, description: 'Factura Creada' })
-  @ApiBody({ type: CreateUserDto })
-  create(@Body() newInvoice: CreateUserDto) {
-
-    return this.invoiceClient.send({ invoices: 'create' }, { newInvoice }).pipe(
+  @ApiBody({ type: CreateInvoiceDto })
+  create(@Body() newInvoice: CreateInvoiceDto) {
+    return this.invoiceClient.send({invoices: 'create'}, { newInvoice }).pipe(
       catchError((rpcError: RpcResponse) => {
         const { statusCode = 500, error } = rpcError;
         throw new HttpException(error ?? rpcError, statusCode);
@@ -26,31 +29,108 @@ export class InvoiceController {
     );
   }
 
+  //@UseGuards(AuthGuard('jwt'))
   @Get(':id')
   @ApiOperation({ summary: 'Obtener Factura por ID' })
-  @ApiParam({ name: 'id', type: Number })
+  @ApiParam({ name: 'id', type: string })
   @ApiResponse({ status: 200, description: 'Factura encontrada' })
   @ApiResponse({ status: 404, description: 'Factura no encontrada' })
-  async findById(@Param('id') id: number) {
-   return this.invoiceClient.send({ invoices: 'findOne' }, id).pipe(
+  async findById(@Param('id') id: string) {
+    // Obtener la factura
+    const invoiceObservable = this.invoiceClient.send({ invoices: 'findOne' }, id).pipe(
       catchError((rpcError: RpcResponse) => {
         const { statusCode = 500, error } = rpcError;
         throw new HttpException(error ?? rpcError, statusCode);
       }),
     );
+    //usar firstValueFrom para convertir el observable en una promesa
+    const invoice = await firstValueFrom(invoiceObservable);
+    if (invoice) {
+      // Obtener los detalles del usuario y los productos
+      const userObservable = this.userClient.send({ users: 'findOne' }, invoice.userId).pipe(
+        catchError((rpcError: RpcResponse) => {
+          const { statusCode = 500, error } = rpcError;
+          throw new HttpException(error ?? rpcError, statusCode);
+        })
+      );
+      //usar firstValueFrom para convertir el observable en una promesa
+      const user = await firstValueFrom(userObservable);
+      // Obtener los detalles de cada producto en la factura
+      const products = await Promise.all(invoice.products.map(async (item) => {
+        // Obtener el detalle del producto
+        const productObservable = this.productClient.send({ produtcs: 'findOne' }, item.id).pipe(
+          catchError((rpcError: RpcResponse) => {
+            const { statusCode = 500, error } = rpcError;
+            throw new HttpException(error ?? rpcError, statusCode);
+          }),
+        );
+        //usar firstValueFrom para convertir el observable en una promesa
+        const product = await firstValueFrom(productObservable);
+        // Combinar la información del producto con la cantidad en la factura
+        return { ...item, name: product.name };
+
+        }));
+      //quitar el campo sub de user
+      const { sub, ...userWithoutSub } = user;
+      // Retornar la factura con los detalles del usuario y los productos
+      return { ...invoice, user: userWithoutSub, products };
+
+    } 
+    else {
+      throw new HttpException('Factura no encontrada', 404);
+    }
   }
 
-
+  //@UseGuards(AuthGuard('jwt'))
   @Get()
   @ApiOperation({ summary: 'Obtener todos las Facturas' })
   @ApiResponse({ status: 200, description: 'Facturas encontrados' })
   @ApiResponse({ status: 404, description: 'Facturas no encontrados' })
   async findAll() {
-   return this.invoiceClient.send({ invoices: 'findAll' }, {}).pipe(
+    // Obtener todas las facturas
+    const invoicesObservable = this.invoiceClient.send({ invoices: 'findAll' }, {}).pipe(
+      catchError((rpcError: RpcResponse) => {
+        const { statusCode = 500, error } = rpcError;
+        throw new HttpException(error ?? rpcError, statusCode);
+      }),
+    );
+    //usar firstValueFrom para convertir el observable en una promesa
+    const invoices = await firstValueFrom(invoicesObservable);  
+    //utilizar la funcion findById para cada factura ya que la lisma completa los datos de usuario y productos
+    return Promise.all(invoices.map(async (invoice) => this.findById(invoice.id)));
+  }
+
+  //@UseGuards(AuthGuard('jwt'))
+  @Put(':id')
+  @ApiOperation({ summary: 'Actualizar Factura por ID' })
+  @ApiParam({ name: 'id', type: string })
+  @ApiResponse({ status: 200, description: 'Factura actualizada' })
+  @ApiResponse({ status: 404, description: 'Factura no encontrada' })
+  @ApiBody({ type: UpdateInvoiceDto })
+  async update(@Param('id') id: string, @Body() updateInvoice: UpdateInvoiceDto) {
+   return this.invoiceClient.send({ invoices: 'update' }, { id, updateInvoice }).pipe(
       catchError((rpcError: RpcResponse) => {
         const { statusCode = 500, error } = rpcError;
         throw new HttpException(error ?? rpcError, statusCode);
       }),
     );
   }
+  /*
+  @Delete(':id')
+  @ApiOperation({ summary: 'Eliminar Factura por ID' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({ status: 200, description: 'Factura eliminada' })
+  @ApiResponse({ status: 404, description: 'Factura no encontrada' })
+  async remove(@Param('id') id: number) {
+    return this.invoiceClient.send({ invoices: 'remove' }, id).pipe(
+      catchError((rpcError: RpcResponse) => {
+        const { statusCode = 500, error } = rpcError;
+        throw new HttpException(error ?? rpcError, statusCode);
+      }
+      ),
+    );
+  }
+
+  */
+
 }

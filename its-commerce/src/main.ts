@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { envs } from './config/envs';
+import { envs } from './config';
 
 // Función principal para iniciar el microservicio
 async function bootstrap() {
@@ -21,6 +21,6 @@ async function bootstrap() {
 
   // Iniciar el microservicio
   await app.listen();
-  logger.log(`Microservicio de productos escuchando en ${envs.PORT}`);
+  logger.log(`Microservicio de Comercio escuchando en ${envs.PORT}`);
 }
 bootstrap();

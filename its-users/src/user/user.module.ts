@@ -12,7 +12,6 @@ import { PrismaService } from '../prisma/prisma.service';
   controllers: [UserController],
   providers: [UserService, AuthService, JWTPassport,PrismaService],
   imports: [JwtModule.register({
-    
     secret: envs.secredKey,
     signOptions: { expiresIn: '24h' },
   }),

@@ -22,10 +22,11 @@ export class AuthService {
      */
     createJWT(user: UpdateUserDto): string {
         // create a payload with the user's id and email
-        const { id: sub, email } = user || {};
+        const { id: sub, email,name } = user || {};
         const payload: PayloadInterface = {
             sub,
             email,
+            name
         };
 
         return this.jwtService.sign(payload);
