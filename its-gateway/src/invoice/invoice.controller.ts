@@ -3,9 +3,8 @@ import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
 import { CreateInvoiceDto,UpdateInvoiceDto } from './dto';
 import { MS_INVOICE, MS_PRODUCT, MS_USER } from 'src/common/constants';
 import { ApiOperation, ApiResponse, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
-import { catchError, firstValueFrom } from 'rxjs';
+import { catchError, firstValueFrom, of } from 'rxjs';
 import { RpcResponse } from 'src/common/models/rpc.model';
-import { string } from 'joi';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Invoices') 
@@ -29,10 +28,11 @@ export class InvoiceController {
     );
   }
 
+  //TODO:Hacer otra version que devuelva la factura con los datos completos de usuario y productos
   //@UseGuards(AuthGuard('jwt'))
   @Get(':id')
   @ApiOperation({ summary: 'Obtener Factura por ID' })
-  @ApiParam({ name: 'id', type: string })
+  @ApiParam({ name: 'id', type: String })
   @ApiResponse({ status: 200, description: 'Factura encontrada' })
   @ApiResponse({ status: 404, description: 'Factura no encontrada' })
   async findById(@Param('id') id: string) {
@@ -58,22 +58,22 @@ export class InvoiceController {
       // Obtener los detalles de cada producto en la factura
       const products = await Promise.all(invoice.products.map(async (item) => {
         // Obtener el detalle del producto
-        const productObservable = this.productClient.send({ produtcs: 'findOne' }, item.id).pipe(
-          catchError((rpcError: RpcResponse) => {
-            const { statusCode = 500, error } = rpcError;
-            throw new HttpException(error ?? rpcError, statusCode);
-          }),
+        const productObservable = this.productClient.send({ products: 'findOne' }, item.id).pipe(
+          catchError(() => {
+            // Emit a fallback value as an observable
+            return of({ name: 'Producto no disponible', ...item });
+          })
         );
-        //usar firstValueFrom para convertir el observable en una promesa
+
         const product = await firstValueFrom(productObservable);
-        // Combinar la información del producto con la cantidad en la factura
         return { ...item, name: product.name };
 
         }));
       //quitar el campo sub de user
       const { sub, ...userWithoutSub } = user;
+      const { userId, ...invoicewithoutUserId } = invoice;
       // Retornar la factura con los detalles del usuario y los productos
-      return { ...invoice, user: userWithoutSub, products };
+      return { ...invoicewithoutUserId, user: userWithoutSub, products };      
 
     } 
     else {
@@ -100,10 +100,31 @@ export class InvoiceController {
     return Promise.all(invoices.map(async (invoice) => this.findById(invoice.id)));
   }
 
+
+  //TODO: cambiar para que solo devuelva las facturas del usuario logueado
+    //@UseGuards(AuthGuard('jwt'))
+  @Get("/me")
+  @ApiOperation({ summary: 'Obtener todos las Facturas del usuario logueado' })
+  @ApiResponse({ status: 200, description: 'Facturas encontrados' })
+  @ApiResponse({ status: 404, description: 'Facturas no encontrados' })
+  async myInvoices() {
+    // Obtener todas las facturas
+    const invoicesObservable = this.invoiceClient.send({ invoices: 'findAll' }, {}).pipe(
+      catchError((rpcError: RpcResponse) => {
+        const { statusCode = 500, error } = rpcError;
+        throw new HttpException(error ?? rpcError, statusCode);
+      }),
+    );
+    //usar firstValueFrom para convertir el observable en una promesa
+    const invoices = await firstValueFrom(invoicesObservable);  
+    //utilizar la funcion findById para cada factura ya que la lisma completa los datos de usuario y productos
+    return Promise.all(invoices.map(async (invoice) => this.findById(invoice.id)));
+  }
+
   //@UseGuards(AuthGuard('jwt'))
   @Put(':id')
   @ApiOperation({ summary: 'Actualizar Factura por ID' })
-  @ApiParam({ name: 'id', type: string })
+  @ApiParam({ name: 'id', type: String })
   @ApiResponse({ status: 200, description: 'Factura actualizada' })
   @ApiResponse({ status: 404, description: 'Factura no encontrada' })
   @ApiBody({ type: UpdateInvoiceDto })

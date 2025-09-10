@@ -19,6 +19,7 @@ model invoice {
   userId    Int
   products  Json     // [{id, name, price, quantity}]
   total     Float
-  status    String?  // Ejemplo: 'pendiente', 'pagada', 'cancelada'
+  status    String?  // Ejemplo: 'carrito','pendiente','pagada', 'cancelada'
   createdAt DateTime @default(now())
 }
+

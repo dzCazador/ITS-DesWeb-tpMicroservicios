@@ -1,8 +1,8 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { InvoiceService } from './invoice.service';
-import { CreateInvoiceDto } from './dto/create-invoice.dto';
-import { UpdateInvoiceDto } from './dto/update-invoice.dto';
+import { CreateInvoiceDto,UpdateInvoiceDto, AddProductDto, RemoveProductDto } from './dto';
+
 
 @Controller()
 export class InvoiceController {
@@ -29,6 +29,25 @@ export class InvoiceController {
     return this.invoiceService.update(id, updateInvoice);
   }
 
+  @MessagePattern({cart: 'create'})
+  createCart(@Payload('newInvoice') newInvoice: CreateInvoiceDto) {
+    return this.invoiceService.create(newInvoice);
+  }
+
+  @MessagePattern({cart: 'addProduct'})
+  addProductToCart(@Payload() data: { id: string; addProduct: AddProductDto }) {
+    const { id, addProduct } = data;
+    return this.invoiceService.addProductToCart(id, addProduct);
+  }
+
+  @MessagePattern({cart: 'removeProduct'})
+  removeProductToCart(@Payload() data: { id: string; removeProduct: RemoveProductDto }) {
+    const { id, removeProduct } = data;
+    return this.invoiceService.removeProductFromCart(id, removeProduct);
+  }
+
+
+  
 
 /*
   @MessagePattern({invoices: 'remove'})

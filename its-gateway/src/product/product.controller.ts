@@ -17,7 +17,7 @@ export class ProductController {
   @ApiBody({ type: CreateProductDto })
   create(@Body() newProduct: CreateProductDto) {
 
-    return this.productClient.send({ produtcs: 'create' }, { newProduct }).pipe(
+    return this.productClient.send({ products: 'create' }, { newProduct }).pipe(
       catchError((rpcError: RpcResponse) => {
         const { statusCode = 500, error } = rpcError;
         throw new HttpException(error ?? rpcError, statusCode);
@@ -31,7 +31,7 @@ export class ProductController {
   @ApiResponse({ status: 200, description: 'Producto encontrado' })
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
   async findById(@Param('id') id: number) {
-   return this.productClient.send({ produtcs: 'findOne' }, id).pipe(
+   return this.productClient.send({ products: 'findOne' }, id).pipe(
       catchError((rpcError: RpcResponse) => {
         const { statusCode = 500, error } = rpcError;
         throw new HttpException(error ?? rpcError, statusCode);
@@ -45,7 +45,7 @@ export class ProductController {
   @ApiResponse({ status: 200, description: 'Productos encontrados' })
   @ApiResponse({ status: 404, description: 'Productos no encontrados' })
   async findAll() {
-   return this.productClient.send({ produtcs: 'findAll' }, {}).pipe(
+   return this.productClient.send({ products: 'findAll' }, {}).pipe(
       catchError((rpcError: RpcResponse) => {
         const { statusCode = 500, error } = rpcError;
         throw new HttpException(error ?? rpcError, statusCode);
@@ -60,7 +60,7 @@ export class ProductController {
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
   @ApiBody({ type: UpdateProductDto })
   async update(@Param('id') id: number, @Body() updateProductDto: UpdateProductDto) {
-    return this.productClient.send({ produtcs: 'update' }, { id, updateProductDto }).pipe(
+    return this.productClient.send({ products: 'update' }, { id, updateProductDto }).pipe(
       catchError((rpcError: RpcResponse) => {
         const { statusCode = 500, error } = rpcError;
         throw new HttpException(error ?? rpcError, statusCode);
