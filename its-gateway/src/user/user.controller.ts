@@ -1,4 +1,4 @@
-import {Controller,Post,Get,Body,Param,Patch,Delete,Inject,HttpException, Put} from '@nestjs/common';
+import {Controller,Post,Get,Body,Param,Patch,Delete,Inject,HttpException, Put, UseGuards} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { catchError } from 'rxjs';
 import { MS_USER } from 'src/common/constants';
@@ -6,6 +6,7 @@ import { RpcResponse } from 'src/common/models/rpc.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import {ApiTags,ApiOperation,ApiResponse,ApiBody,ApiParam} from '@nestjs/swagger';
 import { Public, User } from 'src/common/decorators';
+import { AuthGuard } from '@nestjs/passport';
 
 
 
@@ -29,6 +30,7 @@ export class UserController {
     );
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   @ApiOperation({ summary: 'Obtener usuario por ID' })
   @ApiParam({ name: 'id', type: Number })
@@ -43,7 +45,7 @@ export class UserController {
     );
   }
 
-
+  @UseGuards(AuthGuard('jwt'))
   @Get()
   @ApiOperation({ summary: 'Obtener todos los Usuarios' })
   @ApiResponse({ status: 200, description: 'Usuarios encontrados' })
@@ -57,6 +59,7 @@ export class UserController {
     );
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   @ApiOperation({ summary: 'Actualizar Usuario' })
   @ApiResponse({ status: 200, description: 'Usuario Actualizado' })
@@ -71,6 +74,7 @@ export class UserController {
     );
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   @ApiOperation({ summary: 'Eliminar Usuario' })
   @ApiResponse({ status: 200, description: 'Usuario Eliminado' }) 

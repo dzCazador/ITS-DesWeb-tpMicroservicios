@@ -1,9 +1,9 @@
 import { Controller, UseGuards, Get, Post, Body, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
-import { JwtGuard } from './jwt.guard';
 import { AuthService } from './auth.service';
 import { Public,User } from 'src/common/decorators';
+import { AuthGuard } from '@nestjs/passport';
 
 
 // Controlador de autenticación
@@ -30,7 +30,7 @@ export class AuthController {
 
 
   // Ruta protegida que requiere autenticación
-  @UseGuards(JwtGuard)
+  @UseGuards(AuthGuard('jwt'))
   @Get('profile')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Obtener perfil del usuario autenticado' })

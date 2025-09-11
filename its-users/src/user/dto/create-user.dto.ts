@@ -1,6 +1,7 @@
-import { IsString, IsEmail, MinLength, IsNotEmpty } from 'class-validator';
+import { IsString, IsEmail, MinLength, IsNotEmpty, IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
+import { Role } from 'src/common/enums/role.enum';
 
 
 export class CreateUserDto {
@@ -22,4 +23,8 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(6, { message: 'El password debe ser de al menos 6 caracteres' })
   password: string;
+
+  @IsEnum(Role)
+  @IsNotEmpty()
+  role: Role;  
 }

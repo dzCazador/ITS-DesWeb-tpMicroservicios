@@ -1,15 +1,18 @@
-import { Body, Controller, Get, HttpException, Inject, Param, Patch, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Inject, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
 import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
 import { MS_PRODUCT } from 'src/common/constants';
 import { ApiOperation, ApiResponse, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
 import { catchError } from 'rxjs';
 import { RpcResponse } from 'src/common/models/rpc.model';
 import { UpdateProductDto, CreateProductDto } from './dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Productos') 
+@UseGuards(AuthGuard('jwt'))
 @Controller('product')
 export class ProductController {
   constructor(@Inject(MS_PRODUCT) private readonly productClient: ClientProxy) {}
+  
 
   @Post()
   @ApiOperation({ summary: 'Crear Producto' })
@@ -25,6 +28,7 @@ export class ProductController {
     );
   }
 
+  
   @Get(':id')
   @ApiOperation({ summary: 'Obtener Producto por ID' })
   @ApiParam({ name: 'id', type: Number })

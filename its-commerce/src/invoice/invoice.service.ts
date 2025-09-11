@@ -57,6 +57,11 @@ export class InvoiceService {
         });
   }
 
+  findUserInvoices(userId: number) {
+      console.log
+      return this.prismaService.invoice.findMany({ where: { userId } });
+  }
+
   remove(id: string) {
         return this.prismaService.invoice.delete({ where: { id } });
   }

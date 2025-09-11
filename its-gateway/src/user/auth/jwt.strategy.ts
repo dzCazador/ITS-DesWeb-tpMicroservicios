@@ -12,8 +12,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @Inject(MS_USER) private readonly userClient: ClientProxy,
   ) {
-    console.log('JWT_SECRET configurado:', envs.SECRET ? 'SÍ' : 'NO'); // Debug
-    console.log('JWT_SECRET valor:', envs.SECRET); // Debug
+    //console.log('JWT_SECRET configurado:', envs.SECRET ? 'SÍ' : 'NO'); // Debug
+    //console.log('JWT_SECRET valor:', envs.SECRET); // Debug
     
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -23,34 +23,35 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: PayloadInterface) {
-    console.log('🔍 JWT validate() llamado con payload:', payload); // Debug
+    //console.log('🔍 JWT validate() llamado con payload:', payload); // Debug
     
     try {
       const userId = Number(payload.sub);
-      console.log('🆔 UserId extraído:', userId); // Debug
+      //console.log('🆔 UserId extraído:', userId); // Debug
       
       if (!userId || isNaN(userId)) {
         console.log('❌ ID de usuario inválido'); // Debug
         throw new Error('El ID del usuario no es válido');
       }
 
-      console.log('📞 Llamando a userClient.send con userId:', userId); // Debug
+      //console.log('📞 Llamando a userClient.send con userId:', userId); // Debug
       
+      //imprimir el tipo de userid 
       const user = await firstValueFrom(
-        this.userClient.send('findOneUser', { id: userId }),
+        this.userClient.send({ users: 'findOne' }, userId ),
       );
 
-      console.log('👤 Usuario encontrado:', user); // Debug
+      //console.log('👤 Usuario encontrado:', user); // Debug
 
       if (!user) {
-        console.log('❌ Usuario no encontrado en la base de datos'); // Debug
+        //console.log('❌ Usuario no encontrado en la base de datos'); // Debug
         throw new UnauthorizedException('Usuario no encontrado');
       }
 
-      console.log('✅ Validación JWT exitosa'); // Debug
+      //console.log('✅ Validación JWT exitosa'); // Debug
       return user;
     } catch (err) {
-      console.error('💥 Error al validar el usuario:', err); // Debug
+      //console.error('💥 Error al validar el usuario:', err); // Debug
       throw new UnauthorizedException('Token inválido o usuario no válido');
     }
   }

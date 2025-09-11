@@ -6,15 +6,19 @@ import { ApiOperation, ApiResponse, ApiBody, ApiParam, ApiTags } from '@nestjs/s
 import { catchError, firstValueFrom, of } from 'rxjs';
 import { RpcResponse } from 'src/common/models/rpc.model';
 import { AuthGuard } from '@nestjs/passport';
+import { User,Roles } from 'src/common/decorators';
+import { RolesGuard } from 'src/user/auth/roles.guard';
+import { Role } from 'src/common/enums/role.enum';
 
 @ApiTags('Invoices') 
+@UseGuards(AuthGuard('jwt'))
 @Controller('invoice')
 export class InvoiceController {
   constructor(@Inject(MS_INVOICE) private readonly invoiceClient: ClientProxy,
               @Inject(MS_PRODUCT) private readonly productClient: ClientProxy,
               @Inject(MS_USER) private readonly userClient:ClientProxy ) {}
 
-  //@UseGuards(AuthGuard('jwt'))
+  
   @Post()
   @ApiOperation({ summary: 'Crear Factura' })
   @ApiResponse({ status: 201, description: 'Factura Creada' })
@@ -28,8 +32,27 @@ export class InvoiceController {
     );
   }
 
+  @Get("/me")
+  @ApiOperation({ summary: 'Obtener todos las Facturas del usuario logueado' })
+  @ApiResponse({ status: 200, description: 'Facturas encontrados' })
+  @ApiResponse({ status: 404, description: 'Facturas no encontrados' })
+  async myInvoices( @User() user: any) {
+    const userId = user.id;
+    // Obtener todas las facturas
+    const invoicesObservable = this.invoiceClient.send({invoices: 'findUserInvoices'}, userId).pipe(
+      catchError((rpcError: RpcResponse) => {
+        const { statusCode = 500, error } = rpcError;
+        throw new HttpException(error ?? rpcError, statusCode);
+        
+      }),
+    );
+    //usar firstValueFrom para convertir el observable en una promesa
+    const invoices = await firstValueFrom(invoicesObservable);  
+    //utilizar la funcion findById para cada factura ya que la lisma completa los datos de usuario y productos
+    return Promise.all(invoices.map(async (invoice) => this.findById(invoice.id)));
+  }
+
   //TODO:Hacer otra version que devuelva la factura con los datos completos de usuario y productos
-  //@UseGuards(AuthGuard('jwt'))
   @Get(':id')
   @ApiOperation({ summary: 'Obtener Factura por ID' })
   @ApiParam({ name: 'id', type: String })
@@ -81,8 +104,10 @@ export class InvoiceController {
     }
   }
 
-  //@UseGuards(AuthGuard('jwt'))
+
   @Get()
+  //@Roles(Role.ADMIN) 
+  //@UseGuards(RolesGuard)
   @ApiOperation({ summary: 'Obtener todos las Facturas' })
   @ApiResponse({ status: 200, description: 'Facturas encontrados' })
   @ApiResponse({ status: 404, description: 'Facturas no encontrados' })
@@ -101,27 +126,7 @@ export class InvoiceController {
   }
 
 
-  //TODO: cambiar para que solo devuelva las facturas del usuario logueado
-    //@UseGuards(AuthGuard('jwt'))
-  @Get("/me")
-  @ApiOperation({ summary: 'Obtener todos las Facturas del usuario logueado' })
-  @ApiResponse({ status: 200, description: 'Facturas encontrados' })
-  @ApiResponse({ status: 404, description: 'Facturas no encontrados' })
-  async myInvoices() {
-    // Obtener todas las facturas
-    const invoicesObservable = this.invoiceClient.send({ invoices: 'findAll' }, {}).pipe(
-      catchError((rpcError: RpcResponse) => {
-        const { statusCode = 500, error } = rpcError;
-        throw new HttpException(error ?? rpcError, statusCode);
-      }),
-    );
-    //usar firstValueFrom para convertir el observable en una promesa
-    const invoices = await firstValueFrom(invoicesObservable);  
-    //utilizar la funcion findById para cada factura ya que la lisma completa los datos de usuario y productos
-    return Promise.all(invoices.map(async (invoice) => this.findById(invoice.id)));
-  }
 
-  //@UseGuards(AuthGuard('jwt'))
   @Put(':id')
   @ApiOperation({ summary: 'Actualizar Factura por ID' })
   @ApiParam({ name: 'id', type: String })

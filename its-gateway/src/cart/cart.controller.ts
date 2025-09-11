@@ -9,12 +9,12 @@ import { RpcResponse } from 'src/common/models/rpc.model';
 import { AuthGuard } from '@nestjs/passport';
 
 
-@ApiTags('Cart') 
+@ApiTags('Cart')
+@UseGuards(AuthGuard('jwt')) 
 @Controller('cart')
 export class CartController {
   constructor(@Inject(MS_INVOICE) private readonly invoiceClient: ClientProxy) {}
 
-  //@UseGuards(AuthGuard('jwt'))
   @Post()
   @ApiOperation({ summary: 'Crear Carro' })
   @ApiResponse({ status: 201, description: 'Carro Creada' })

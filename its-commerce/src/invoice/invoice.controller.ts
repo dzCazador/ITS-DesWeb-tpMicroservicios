@@ -18,6 +18,13 @@ export class InvoiceController {
     return this.invoiceService.findAll();
   }
 
+  @MessagePattern({invoices: 'findUserInvoices'})
+  findUserInvoices(@Payload() userId: number) {
+    console.log("User ID from token:", userId);
+    return this.invoiceService.findUserInvoices(userId);
+  }
+
+
   @MessagePattern({invoices: 'findOne'})
   findOne(@Payload() id: string) {
     return this.invoiceService.findOne(id);
