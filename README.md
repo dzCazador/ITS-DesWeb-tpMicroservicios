@@ -5,7 +5,8 @@
 - **Caporaso Manuel**
 
 Este es el trabajo práctico evaluativo de la materia **Desarrollo Web** de la **Tecnicatura en Desarrollo de Software** del **Instituto Técnico Superior Cipolletti**. 
-El proyecto se desarrolló con una **arquitectura de microservicios**, donde cada servicio se levanta de manera independiente y se comunica con el **Gateway** para la autenticación y coordinación de datos.  
+El proyecto se desarrolló con una **arquitectura de microservicios**, donde cada servicio se levanta de manera independiente y se comunica con el **Gateway** para la autenticación y coordinación de datos.
+
 Cada microservicio tiene su propia base de datos y ORM configurado según la necesidad:
 
 - **Usuarios** → Prisma ORM con **PostgreSQL**  
@@ -60,7 +61,8 @@ Cada microservicio debe iniciarse **por separado** siguiendo los pasos:
 
    *USUARIOS  
    ```bash
-   npx prisma migrate dev --name <NOMBRE_MIGRACION>
+   npx prisma migrate dev --name <NOMBRE_MIGRACION> y luego
+   npx prima generate
    ```
    
    *PRODUCTOS  
@@ -74,13 +76,14 @@ Cada microservicio debe iniciarse **por separado** siguiendo los pasos:
    ```
    *FACTURAS  
    ```bash
-   npx prisma migrate dev --name <NOMBRE_MIGRACION>
+   npx prisma migrate dev --name <NOMBRE_MIGRACION> y luego
+   npx prima generate
    ```
 
 7. **Iniciar cada microservicion**  
    Ejecutá el siguiente comando para iniciar la aplicación en modo desarrollo:  
    ```bash
-   nest star --watch
+   nest run start
    ```
 
 ## 🐳**Instalación y configuración (con Docker)**
@@ -117,33 +120,41 @@ Generar con:
   npm run compodoc:serve
    ```
 ## 🚀 **Funcionalidades principales**
---
+
 Autenticación centralizada en el Gateway (JWT, Passport, Guards).
---
+
 Comunicación entre microservicios (ejemplo: facturas enlazadas con usuarios).
---
+
 Gestión de carritos reutilizando la entidad Factura (Invoice):
 En lugar de crear una nueva entidad Cart, se utiliza la misma entidad Invoice, diferenciada por el campo status.
 Cuando un usuario agrega productos, se genera una Invoice con status = "carrito".
 Al finalizar la compra, el status cambia a "aprobada", convirtiéndose en una factura real.
---
+
 Gestión de productos con stock y relación con usuarios mediante carritos/facturas.
--
+
 CRUD básicos: creación, consulta, edición (sin eliminación física).
---
+
 Buenas prácticas de programación (SOLID, manejo de errores).
---
+
 Limpieza de carritos automática con node-cron si superan los 3 días de inactividad.
 
 ## 🛠️ **Tecnologías utilizadas**
 
 **Node.js** - Entorno de ejecución
+
 **NestJS** - Framework principal
+
 **Prisma ORM** - Usuarios (PostgreSQL) y Facturas (MongoDB)
+
 **TypeORM** - Productos (MySQL)
+
 **Swagger** - Documentación de rutas
+
 **Compodoc** - Documentación técnica
+
 **JWT / Passport / Guards** - Autenticación y autorización
+
 **Node-cron** - Automatización de limpieza de carritos
+
 **Docker & Docker Compose** - Contenerización de servicios
 
