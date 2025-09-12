@@ -1,4 +1,4 @@
-# ITS Backend - Proyecto Final Microservicios
+# ITS Desarrollo Web - Proyecto Final Microservicios
 
 ## 👥 Integrantes del Proyecto
 - **Testaseca Cristian**
