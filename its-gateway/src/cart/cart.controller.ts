@@ -1,15 +1,15 @@
 import { Body, Controller, Delete, Get, HttpException, Inject, Param, Post, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiOperation, ApiResponse, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
-import { catchError, Observable } from 'rxjs';
 import { AuthGuard } from '@nestjs/passport';
 import { sendToMicroservice } from 'src/common/utils'
 
 import { CreateInvoiceDto } from '../invoice/dto';
 import { AddProductDto, RemoveProductDto } from './dto';
 import { MS_INVOICE, MS_PRODUCT, MS_USER } from 'src/common/constants';
-import { RpcResponse } from 'src/common/models/rpc.model';
-import { User } from 'src/common/decorators';
+import { Roles, User } from 'src/common/decorators';
+import { Role } from 'src/common/enums';
+import { RolesGuard } from 'src/user/auth/roles.guard';
 
 @ApiTags('Cart')
 @UseGuards(AuthGuard('jwt'))
@@ -58,8 +58,10 @@ export class CartController {
     return sendToMicroservice(this.invoiceClient, { cart: 'removeProductFromUserCart' }, { userId:user.id, removeProduct });
   }  
 
-  /* ADMIN Patterns */
+  /* ADMIN CART Patterns */
   @Post()
+  @Roles(Role.ADMIN) 
+  @UseGuards(RolesGuard)  
   @ApiOperation({ summary: 'Crear Carro' })
   @ApiResponse({ status: 201, description: 'Carro Creado' })
   @ApiBody({ type: CreateInvoiceDto })
@@ -68,6 +70,8 @@ export class CartController {
   }
 
   @Post(":id")
+  @Roles(Role.ADMIN) 
+  @UseGuards(RolesGuard)  
   @ApiOperation({ summary: 'Agregar Producto a Carro' })
   @ApiResponse({ status: 201, description: 'Producto agregado al Carro' })
   @ApiBody({ type: AddProductDto })
@@ -76,6 +80,8 @@ export class CartController {
   }
 
   @Delete(":id")
+  @Roles(Role.ADMIN) 
+  @UseGuards(RolesGuard)  
   @ApiOperation({ summary: 'Remover Producto de Carro' })
   @ApiResponse({ status: 201, description: 'Producto removido de Carro' })
   @ApiBody({ type: RemoveProductDto })

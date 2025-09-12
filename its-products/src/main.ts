@@ -8,6 +8,7 @@ import { envs } from './config/envs';
 async function bootstrap() {
     const logger = new Logger('Main');
   // Crear el microservicio con configuración TCP
+
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(AppModule, {
     transport: Transport.TCP,
     options: {
@@ -21,6 +22,7 @@ async function bootstrap() {
 
   // Iniciar el microservicio
   await app.listen();
+
   logger.log(`Microservicio de productos escuchando en ${envs.PORT}`);
 }
 bootstrap();

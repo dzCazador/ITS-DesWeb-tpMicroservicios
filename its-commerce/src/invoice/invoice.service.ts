@@ -100,7 +100,6 @@ export class InvoiceService {
   }
 
   findUserInvoices(userId: number) {
-      console.log
       return this.prismaService.invoice.findMany({ where: { userId } });
   }
 
@@ -209,14 +208,12 @@ export class InvoiceService {
   }
 
   createUserCart(userId:number){
-    console.log(userId)
     const newCart = {
         "userId": userId,
         "products": [],
         "total": 0,
         "status": "Carrito",
     }
-    console.log(newCart)
     return this.create(newCart);
   }
 

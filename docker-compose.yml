@@ -1,0 +1,84 @@
+services:
+
+  its-users:
+    build:
+      context: ./its-users
+      dockerfile: Dockerfile
+    container_name: its-users
+    restart: unless-stopped
+    environment:
+      - PORT=${PORT_USERS}
+      - HOST=0.0.0.0
+      - GATEWAY_HOST=its-gateway
+      - GATEWAY_PORT=3000
+      - DATABASE_URL=${USER_DATABASE_URL}
+      - SECRET_KEY=${JWT_SECRET}
+    ports:
+      - "${PORT_USERS}:3001"
+
+  its-products:
+    build:
+      context: ./its-products
+      dockerfile: Dockerfile
+    container_name: its-products
+    restart: unless-stopped
+    environment:
+      - HOST=0.0.0.0
+      - PORT=${PORT_PRODUCTS}
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DATABASE=${DB_NAME}
+      - SYNC=false
+    ports:
+      - "${PORT_PRODUCTS}:3002"
+
+  its-commerce:
+    build:
+      context: ./its-commerce
+      dockerfile: Dockerfile
+    container_name: ms-commerce
+    restart: always
+    depends_on:
+      - its-users
+      - its-products
+    environment:
+      - HOST=0.0.0.0
+      - PORT=${PORT_INVOICE}
+      - GATEWAY_HOST=its-gateway
+      - GATEWAY_PORT=3000
+      - DATABASE_URL=${COMMERCE_DATABASE_URL}
+      - SECRET_KEY=${JWT_SECRET}
+      - MS_PRODUCT_HOST=its-products
+      - MS_PRODUCT_PORT=${PORT_PRODUCTS}
+    ports:
+      - "${PORT_INVOICE}:3003"
+
+  its-gateway:
+    build:
+      context: ./its-gateway
+      dockerfile: Dockerfile
+    container_name: its-gateway
+    restart: unless-stopped
+    depends_on:
+      - its-users
+      - its-products
+      - its-commerce
+    environment:
+      - PORT=${PORT_GATEWAY}
+      - MS_USER_HOST=its-users
+      - MS_USER_PORT=${PORT_USERS}
+      - MS_PRODUCT_HOST=its-products
+      - MS_PRODUCT_PORT=${PORT_PRODUCTS}
+      - MS_INVOICE_HOST=its-commerce
+      - MS_INVOICE_PORT=${PORT_INVOICE}
+      - SECRET=${JWT_SECRET}
+    ports:
+      - "${PORT_GATEWAY}:3000"
+    volumes:
+      - ./its-gateway/uploads:/uploads
+
+networks:
+  default:
+    driver: bridge

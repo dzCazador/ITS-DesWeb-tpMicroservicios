@@ -5,8 +5,10 @@ import { ClientProxy } from '@nestjs/microservices';
 
 import { MS_USER } from 'src/common/constants';
 import { CreateUserDto, UpdateUserDto } from './dto';
-import { Public } from 'src/common/decorators';
+import { Public, Roles } from 'src/common/decorators';
 import { sendToMicroservice } from 'src/common/utils';
+import { Role } from 'src/common/enums';
+import { RolesGuard } from './auth/roles.guard';
 
 
 @ApiTags('Usuarios') 
@@ -35,6 +37,8 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'))
   @Get()
+  @Roles(Role.ADMIN) 
+  @UseGuards(RolesGuard)
   @ApiOperation({ summary: 'Obtener todos los Usuarios' })
   @ApiResponse({ status: 200, description: 'Usuarios encontrados' })
   @ApiResponse({ status: 404, description: 'Usuarios no encontrados' })
@@ -44,6 +48,8 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
+  @Roles(Role.ADMIN) 
+  @UseGuards(RolesGuard)
   @ApiOperation({ summary: 'Actualizar Usuario' })
   @ApiResponse({ status: 200, description: 'Usuario Actualizado' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
@@ -54,6 +60,8 @@ export class UserController {
 
   @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
+  @Roles(Role.ADMIN) 
+  @UseGuards(RolesGuard)  
   @ApiOperation({ summary: 'Eliminar Usuario' })
   @ApiResponse({ status: 200, description: 'Usuario Eliminado' }) 
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })

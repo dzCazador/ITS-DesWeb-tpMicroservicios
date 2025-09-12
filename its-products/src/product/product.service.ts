@@ -65,8 +65,7 @@ export class ProductService {
       if (product) {
         product.stock -= quantity;
       }
-
-      
+    
       return await this.productRepository.save(product);
     } catch (error) {
       handleRpcError(error);
