@@ -36,4 +36,16 @@ export class ProductController {
   remove(@Payload() id: number) {
     return this.productService.remove(id);
   }
+
+  @MessagePattern({ products: 'updateStock' })
+  async updateStock(@Payload() payload: { id: number; quantity: number }) {
+    const { id, quantity } = payload;
+    
+    await this.productService.updateStock(id, quantity);
+    // Devolver una respuesta, si es necesario
+    return { success: true, message: 'Stock updated' };
+
+  }
+
+  
 }

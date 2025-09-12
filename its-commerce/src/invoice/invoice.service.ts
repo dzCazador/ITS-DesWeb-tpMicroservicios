@@ -1,15 +1,57 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
+import * as cron from 'node-cron';
+
 import { AddProductDto, CreateInvoiceDto,RemoveProductDto,UpdateInvoiceDto } from './dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { RpcException } from '@nestjs/microservices';
 import { RpcResponse } from 'src/common/model/rpc.model';
+import { MS_PRODUCT } from 'src/common/constants';
+import { sendToMicroservice } from 'src/common/utils';
 
 
 @Injectable()
 export class InvoiceService {
+  private readonly logger = new Logger(InvoiceService.name);
   constructor(
-    private readonly prismaService: PrismaService    
-  ){}
+    private readonly prismaService: PrismaService,
+    @Inject(MS_PRODUCT) private readonly productClient: ClientProxy  
+  ){
+      // cada una hora se corre el proceso de limpieza de carritos
+      cron.schedule('0 * * * *', async () => {
+      this.logger.log('Ejecutando limpieza de carritos viejos...');
+      await this.cleanOldCartItems();
+    });
+
+  }
+
+ async cleanOldCartItems(): Promise<void> {
+    try {
+      const threeDaysAgo = new Date();
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+      // Buscar Carritos que tengan mas de 3 dias
+      const oldItems = await this.prismaService.invoice.findMany({
+        where: { createdAt: { lt: threeDaysAgo } , 
+          status: {
+            equals: 'carrito',
+            mode: 'insensitive', // Ignora mayúsculas y minúsculas
+          }},
+      });
+
+      if (oldItems.length > 0) {
+        const ids = oldItems.map((item) => item.id);
+        await this.prismaService.invoice.deleteMany({
+          where: { id: { in: ids } },
+        });
+        this.logger.log(`Se eliminaron ${ids.length} carritos viejos.`);
+      } else {
+        this.logger.log('No hay carritos viejos para limpiar.');
+      }
+    } catch (err) {
+      this.logger.error('Error limpiando carritos viejos', err);
+    }
+  }
+
 
   async create(createInvoice: CreateInvoiceDto) {
     //si el campo status es "carrito", controlar que el usuario ya no tenga un carrito creado
@@ -146,6 +188,79 @@ export class InvoiceService {
         });
       });
   }
+
+  async getUserCart(userId: number) {
+    const cart =  await this.prismaService.invoice.findFirst(
+      { where: { userId,     
+        status: {
+            equals: 'carrito',
+            mode: 'insensitive', // Ignora mayúsculas y minúsculas
+          },
+        } 
+      })
+    if (!cart) {
+      throw new RpcException({
+        error: 'Cart not found.',
+        statusCode: 404,
+      } as RpcResponse);
+    }
+    return cart;
+
+  }
+
+  createUserCart(userId:number){
+    console.log(userId)
+    const newCart = {
+        "userId": userId,
+        "products": [],
+        "total": 0,
+        "status": "Carrito",
+    }
+    console.log(newCart)
+    return this.create(newCart);
+  }
+
+  async finalizeUserCart(userId: number) {
+    return await this.prismaService.invoice.findFirst(
+      { where: { userId,     
+        status: {
+            equals: 'carrito',
+            mode: 'insensitive', // Ignora mayúsculas y minúsculas
+          },
+        } 
+      }).then(
+        async cart => {
+        if (!cart) {
+          throw new RpcException({
+            error: 'Cart not found.',
+            statusCode: 404,
+          } as RpcResponse);
+        }
+
+        // Decrementar el stock de cada producto en el carrito
+        if (Array.isArray(cart.products)) {
+          const productUpdates = cart.products
+            .filter((product: any) => product && typeof product.id === 'number' && typeof product.quantity === 'number')
+            .map((product: any) => {
+              const payload = {
+                id: product.id,
+                quantity: product.quantity
+              };
+              // Llama al microservicio de productos para decrementar el stock
+              return sendToMicroservice(this.productClient, { products: 'updateStock' }, payload);
+          });
+
+          await Promise.all(productUpdates);
+        }
+
+        //Finalizar Carrito
+        return await this.prismaService.invoice.update({
+          where: { id:cart.id },
+          data: { status: "Aprobado", },
+        });
+      });
+  }
+
 
   //crear una funcion que dada una lista de productos calcule el total como la suma de los precios por cantidad
   private async calculateTotal(products: any[]): Promise<number> {

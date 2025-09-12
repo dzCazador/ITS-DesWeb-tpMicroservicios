@@ -1,0 +1,1 @@
+export const MS_PRODUCT = 'MS_PRODUCT';

@@ -1,9 +1,10 @@
 import { Controller, UseGuards, Get, Post, Body, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
-import { LoginDto } from './dto/login.dto';
+import { AuthGuard } from '@nestjs/passport';
+
 import { AuthService } from './auth.service';
 import { Public,User } from 'src/common/decorators';
-import { AuthGuard } from '@nestjs/passport';
+import { LoginDto } from './dto';
 
 
 // Controlador de autenticación

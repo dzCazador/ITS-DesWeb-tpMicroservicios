@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
 import { RpcException } from '@nestjs/microservices';
-import { RpcResponse } from 'src/common/models/rpc.model';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { RpcResponse } from 'src/common/model/rpc.model';
+import { handleRpcError } from 'src/common/utils'
+import { CreateProductDto,UpdateProductDto } from './dto';
+import { Product } from './entities/product.entity';
 
 @Injectable()
 export class ProductService {
@@ -14,24 +15,19 @@ export class ProductService {
     private readonly productRepository: Repository<Product>,
   ) {}
 
-
   create(createProduct: CreateProductDto) {
-    console.log('Creating product:', createProduct);
     try {
       const product = this.productRepository.create(createProduct);
       return this.productRepository.save(product);
     } catch (error) {
-      throw new RpcException({
-        error: error.message || 'Unexpected error',
-        statusCode: 500,
-      } as RpcResponse);
+      handleRpcError(error);
     }
   }
 
   findAll() {
     return this.productRepository.find(
       { withDeleted: true },
-    )
+    );
   }
 
   
@@ -47,10 +43,7 @@ export class ProductService {
 
     return product;
     } catch (error) {
-      throw new RpcException({
-        error: error.message || 'Unexpected error',
-        statusCode: 500,
-      } as RpcResponse);
+      handleRpcError(error);
     }
   }
 
@@ -61,18 +54,31 @@ export class ProductService {
       Object.assign(product, updateProductDto);
       return await this.productRepository.save(product);
     } catch (err) {
-      throw new RpcException({
-        error: err.message || 'Unexpected error',
-        statusCode: 500,
-      } as RpcResponse);
+      handleRpcError(err);
+    }
+  }
+
+  async updateStock(id: number, quantity: number ) {
+    try {
+      const product = await this.productRepository.findOne({ where: { id } });
+
+      if (product) {
+        product.stock -= quantity;
+      }
+
+      
+      return await this.productRepository.save(product);
+    } catch (error) {
+      handleRpcError(error);
     }
   }
 
   remove(id: number) {
-    const product = this.productRepository.findOne({ where: { id } });
-    if (!product) {
-      return null;
+    try {
+      this.productRepository.findOneOrFail({ where: { id } });
+      return this.productRepository.softDelete(id);
+    } catch (error) {
+      handleRpcError(error);
     }
-    return this.productRepository.softDelete(id);
   }
 }

@@ -10,6 +10,8 @@ interface EnvVars {
   GATEWAY_PORT: number;
   DATABASE_URL: string;
   SECRET_KEY: string;
+  MS_PRODUCT_HOST:string;
+  MS_PRODUCT_PORT:number
 }
 
 const envsSchema = joi
@@ -20,6 +22,9 @@ const envsSchema = joi
     GATEWAY_PORT: joi.number().required(),
     DATABASE_URL: joi.string().required(),
     SECRET_KEY: joi.string().required(),
+    MS_PRODUCT_HOST: joi.string().required(),
+    MS_PRODUCT_PORT: joi.number().required(),    
+
   })
   .unknown(true);
 
@@ -36,4 +41,7 @@ export const envs = {
   GATEWAY_PORT: envVars.GATEWAY_PORT,
   DATABASE_URL: envVars.DATABASE_URL,
   secredKey:envVars.SECRET_KEY,
+  MS_PRODUCT_HOST: envVars.MS_PRODUCT_HOST,
+  MS_PRODUCT_PORT:envVars.MS_PRODUCT_PORT,
+  
 };

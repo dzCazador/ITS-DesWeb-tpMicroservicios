@@ -1,13 +1,12 @@
-import {Controller,Post,Get,Body,Param,Patch,Delete,Inject,HttpException, Put, UseGuards} from '@nestjs/common';
-import { ClientProxy } from '@nestjs/microservices';
-import { catchError } from 'rxjs';
-import { MS_USER } from 'src/common/constants';
-import { RpcResponse } from 'src/common/models/rpc.model';
-import { CreateUserDto } from './dto/create-user.dto';
+import {Controller,Post,Get,Body,Param,Patch,Delete,Inject, UseGuards} from '@nestjs/common';
 import {ApiTags,ApiOperation,ApiResponse,ApiBody,ApiParam} from '@nestjs/swagger';
-import { Public, User } from 'src/common/decorators';
 import { AuthGuard } from '@nestjs/passport';
+import { ClientProxy } from '@nestjs/microservices';
 
+import { MS_USER } from 'src/common/constants';
+import { CreateUserDto, UpdateUserDto } from './dto';
+import { Public } from 'src/common/decorators';
+import { sendToMicroservice } from 'src/common/utils';
 
 
 @ApiTags('Usuarios') 
@@ -21,13 +20,7 @@ export class UserController {
   @ApiResponse({ status: 201, description: 'Usuario Creado' })
   @ApiBody({ type: CreateUserDto })
   create(@Body() newUser: CreateUserDto) {
-
-    return this.userClient.send({ users: 'create' }, { newUser }).pipe(
-      catchError((rpcError: RpcResponse) => {
-        const { statusCode = 500, error } = rpcError;
-        throw new HttpException(error ?? rpcError, statusCode);
-      }),
-    );
+    return sendToMicroservice(this.userClient, { users: 'create' }, { newUser });
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -37,12 +30,7 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Usuario encontrado' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   async findById(@Param('id') id: number) {
-   return this.userClient.send({ users: 'findOne' }, id).pipe(
-      catchError((rpcError: RpcResponse) => {
-        const { statusCode = 500, error } = rpcError;
-        throw new HttpException(error ?? rpcError, statusCode);
-      }),
-    );
+    return sendToMicroservice(this.userClient, { users: 'findOne' }, id);
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -51,12 +39,7 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Usuarios encontrados' })
   @ApiResponse({ status: 404, description: 'Usuarios no encontrados' })
   async findAll() {
-   return this.userClient.send({ users: 'findAll' }, {}).pipe(
-      catchError((rpcError: RpcResponse) => {
-        const { statusCode = 500, error } = rpcError;
-        throw new HttpException(error ?? rpcError, statusCode);
-      }),
-    );
+    return sendToMicroservice(this.userClient, { users: 'findAll' }, {});
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -64,14 +47,9 @@ export class UserController {
   @ApiOperation({ summary: 'Actualizar Usuario' })
   @ApiResponse({ status: 200, description: 'Usuario Actualizado' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
-  @ApiBody({ type: CreateUserDto })
+  @ApiBody({ type: UpdateUserDto })
   update(@Param('id') id: number,@Body() updateUser) {
-      return this.userClient.send({ users: 'update' }, { id, updateUser }).pipe(
-      catchError((rpcError: RpcResponse) => {
-        const { statusCode = 500, error } = rpcError;
-        throw new HttpException(error ?? rpcError, statusCode);
-      }),
-    );
+    return sendToMicroservice(this.userClient, { users: 'update' }, { id, updateUser });
   }
 
   @UseGuards(AuthGuard('jwt'))
@@ -80,11 +58,6 @@ export class UserController {
   @ApiResponse({ status: 200, description: 'Usuario Eliminado' }) 
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   remove(@Param('id') id: number) {
-    return this.userClient.send({ users: 'removeupdate' }, id).pipe(
-      catchError((rpcError: RpcResponse) => {
-        const { statusCode = 500, error } = rpcError;
-        throw new HttpException(error ?? rpcError, statusCode);
-      }),
-    );
+    return sendToMicroservice(this.userClient, { users: 'remove' }, id);
   }
 }

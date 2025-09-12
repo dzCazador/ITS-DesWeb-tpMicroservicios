@@ -12,6 +12,9 @@ export class Product {
   @Column('decimal', { precision: 10, scale: 2 })
   price: number;
 
+  @Column('decimal', { precision: 10, scale: 2 })
+  stock: number;  
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 

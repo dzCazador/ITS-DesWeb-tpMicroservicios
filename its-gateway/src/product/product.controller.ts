@@ -1,11 +1,14 @@
 import { Body, Controller, Get, HttpException, Inject, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
-import { ClientProxy, MessagePattern, Payload } from '@nestjs/microservices';
-import { MS_PRODUCT } from 'src/common/constants';
+import { ClientProxy } from '@nestjs/microservices';
 import { ApiOperation, ApiResponse, ApiBody, ApiParam, ApiTags } from '@nestjs/swagger';
-import { catchError } from 'rxjs';
-import { RpcResponse } from 'src/common/models/rpc.model';
-import { UpdateProductDto, CreateProductDto } from './dto';
 import { AuthGuard } from '@nestjs/passport';
+
+import { MS_PRODUCT } from 'src/common/constants';
+import { Roles } from 'src/common/decorators';
+import { Role } from 'src/common/enums';
+import { RolesGuard } from 'src/user/auth/roles.guard';
+import { UpdateProductDto, CreateProductDto } from './dto';
+import { sendToMicroservice } from 'src/common/utils';
 
 @ApiTags('Productos') 
 @UseGuards(AuthGuard('jwt'))
@@ -13,21 +16,15 @@ import { AuthGuard } from '@nestjs/passport';
 export class ProductController {
   constructor(@Inject(MS_PRODUCT) private readonly productClient: ClientProxy) {}
   
-
   @Post()
+  @Roles(Role.ADMIN) 
+  @UseGuards(RolesGuard)
   @ApiOperation({ summary: 'Crear Producto' })
   @ApiResponse({ status: 201, description: 'Producto Creado' })
   @ApiBody({ type: CreateProductDto })
   create(@Body() newProduct: CreateProductDto) {
-
-    return this.productClient.send({ products: 'create' }, { newProduct }).pipe(
-      catchError((rpcError: RpcResponse) => {
-        const { statusCode = 500, error } = rpcError;
-        throw new HttpException(error ?? rpcError, statusCode);
-      }),
-    );
+    return sendToMicroservice(this.productClient, { products: 'create' }, { newProduct });
   }
-
   
   @Get(':id')
   @ApiOperation({ summary: 'Obtener Producto por ID' })
@@ -35,41 +32,26 @@ export class ProductController {
   @ApiResponse({ status: 200, description: 'Producto encontrado' })
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
   async findById(@Param('id') id: number) {
-   return this.productClient.send({ products: 'findOne' }, id).pipe(
-      catchError((rpcError: RpcResponse) => {
-        const { statusCode = 500, error } = rpcError;
-        throw new HttpException(error ?? rpcError, statusCode);
-      }),
-    );
+    return sendToMicroservice(this.productClient, { products: 'findOne' }, id);
   }
-
-
+  
   @Get()
   @ApiOperation({ summary: 'Obtener todos los Productos' })
   @ApiResponse({ status: 200, description: 'Productos encontrados' })
   @ApiResponse({ status: 404, description: 'Productos no encontrados' })
   async findAll() {
-   return this.productClient.send({ products: 'findAll' }, {}).pipe(
-      catchError((rpcError: RpcResponse) => {
-        const { statusCode = 500, error } = rpcError;
-        throw new HttpException(error ?? rpcError, statusCode);
-      }),
-    );
+    return sendToMicroservice(this.productClient, { products: 'findAll' }, {});
   }
-
+  
   @Put(':id')
+  @Roles(Role.ADMIN) 
+  @UseGuards(RolesGuard)
   @ApiOperation({ summary: 'Actualizar Producto por ID' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Producto actualizado' })
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })
   @ApiBody({ type: UpdateProductDto })
   async update(@Param('id') id: number, @Body() updateProductDto: UpdateProductDto) {
-    return this.productClient.send({ products: 'update' }, { id, updateProductDto }).pipe(
-      catchError((rpcError: RpcResponse) => {
-        const { statusCode = 500, error } = rpcError;
-        throw new HttpException(error ?? rpcError, statusCode);
-      }),
-    );
+    return sendToMicroservice(this.productClient, { products: 'update' }, { id, updateProductDto });
   }
-
 }

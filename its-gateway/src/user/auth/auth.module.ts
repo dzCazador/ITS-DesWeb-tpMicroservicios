@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './jwt.strategy';
+
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { envs } from 'src/config/envs';
 import { MS_USER } from '../../common/constants';
-import { JwtStrategy } from './jwt.strategy';
+
 
 @Module({
   controllers: [AuthController],

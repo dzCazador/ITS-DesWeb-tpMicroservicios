@@ -28,10 +28,8 @@ export class AuthService {
           );
       const user = await firstValueFrom(userObservable);
 
-      console.log('✅ Usuario recibido del microservicio users:', user);
-
       if (user) {
-        return { sub: user.sub, email: user.email, name: user.name };
+        return { sub: user.sub, email: user.email, name: user.name, role: user.role }; // Asegúrate de que el payload incluye el rol
       }
       return null;
       } catch (error) {

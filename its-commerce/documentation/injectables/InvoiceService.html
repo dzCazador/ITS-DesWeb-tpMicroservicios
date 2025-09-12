@@ -1,0 +1,1545 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>its-commerce documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">its-commerce documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content injectable">
+                   <div class="content-data">
+
+
+
+
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Injectables</li>
+  <li class="breadcrumb-item" >InvoiceService</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" 
+                class="nav-link"
+                class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" 
+                class="nav-link"
+                
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info">
+        <p class="comment">
+            <h3>File</h3>
+        </p>
+        <p class="comment">
+            <code>src/invoice/invoice.service.ts</code>
+        </p>
+
+
+
+
+
+            <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Readonly</span>
+                                <a href="#logger" >logger</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#addProductToCart" >addProductToCart</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Private</span>
+                                    <span class="modifier">Async</span>
+                                <a href="#calculateTotal" >calculateTotal</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#cleanOldCartItems" >cleanOldCartItems</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#create" >create</a>
+                            </li>
+                            <li>
+                                <a href="#createUserCart" >createUserCart</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#finalizeUserCart" >finalizeUserCart</a>
+                            </li>
+                            <li>
+                                <a href="#findAll" >findAll</a>
+                            </li>
+                            <li>
+                                <a href="#findOne" >findOne</a>
+                            </li>
+                            <li>
+                                <a href="#findUserInvoices" >findUserInvoices</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#getUserCart" >getUserCart</a>
+                            </li>
+                            <li>
+                                <a href="#remove" >remove</a>
+                            </li>
+                            <li>
+                                    <span class="modifier">Async</span>
+                                <a href="#removeProductFromCart" >removeProductFromCart</a>
+                            </li>
+                            <li>
+                                <a href="#update" >update</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+            <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(prismaService: <a href="../injectables/PrismaService.html" target="_self">PrismaService</a>, productClient: ClientProxy)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/invoice/invoice.service.ts:14</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>prismaService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/PrismaService.html" target="_self" >PrismaService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>productClient</td>
+                                                  
+                                                        <td>
+                                                                    <code>ClientProxy</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+            <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="addProductToCart"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>addProductToCart</b></span>
+                        <a href="#addProductToCart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>addProductToCart(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, addProduct: <a href="../classes/AddProductDto.html" target="_self">AddProductDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="113"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:113</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>addProduct</td>
+                                            <td>
+                                                            <code><a href="../classes/AddProductDto.html" target="_self" >AddProductDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="calculateTotal"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Async</span>
+                        <span ><b>calculateTotal</b></span>
+                        <a href="#calculateTotal"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>calculateTotal(products: any[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="266"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:266</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>products</td>
+                                            <td>
+                                                        <code>any[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;number&gt;</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="cleanOldCartItems"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>cleanOldCartItems</b></span>
+                        <a href="#cleanOldCartItems"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>cleanOldCartItems()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="27"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:27</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>Promise&lt;void&gt;</code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="create"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>create</b></span>
+                        <a href="#create"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>create(createInvoice: <a href="../classes/CreateInvoiceDto.html" target="_self">CreateInvoiceDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="56"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:56</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>createInvoice</td>
+                                            <td>
+                                                            <code><a href="../classes/CreateInvoiceDto.html" target="_self" >CreateInvoiceDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="createUserCart"></a>
+                    <span class="name">
+                        <span ><b>createUserCart</b></span>
+                        <a href="#createUserCart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>createUserCart(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="211"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:211</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="finalizeUserCart"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>finalizeUserCart</b></span>
+                        <a href="#finalizeUserCart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>finalizeUserCart(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="223"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:223</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findAll"></a>
+                    <span class="name">
+                        <span ><b>findAll</b></span>
+                        <a href="#findAll"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>findAll()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="84"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:84</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findOne"></a>
+                    <span class="name">
+                        <span ><b>findOne</b></span>
+                        <a href="#findOne"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>findOne(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="88"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:88</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="findUserInvoices"></a>
+                    <span class="name">
+                        <span ><b>findUserInvoices</b></span>
+                        <a href="#findUserInvoices"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>findUserInvoices(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="102"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:102</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="getUserCart"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>getUserCart</b></span>
+                        <a href="#getUserCart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>getUserCart(userId: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank">number</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="192"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:192</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>userId</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/number" target="_blank" >number</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="remove"></a>
+                    <span class="name">
+                        <span ><b>remove</b></span>
+                        <a href="#remove"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>remove(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="107"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:107</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeProductFromCart"></a>
+                    <span class="name">
+                            <span class="modifier">Async</span>
+                        <span ><b>removeProductFromCart</b></span>
+                        <a href="#removeProductFromCart"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+                        <span class="modifier-icon icon ion-ios-reset"></span>
+                    <code>removeProductFromCart(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, removeProduct: <a href="../classes/RemoveProductDto.html" target="_self">RemoveProductDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="153"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:153</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>removeProduct</td>
+                                            <td>
+                                                            <code><a href="../classes/RemoveProductDto.html" target="_self" >RemoveProductDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>    <code>unknown</code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="update"></a>
+                    <span class="name">
+                        <span ><b>update</b></span>
+                        <a href="#update"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>update(id: <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank">string</a>, updateInvoiceDto: <a href="../classes/UpdateInvoiceDto.html" target="_self">UpdateInvoiceDto</a>)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="92"
+                                    class="link-to-prism">src/invoice/invoice.service.ts:92</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>id</td>
+                                            <td>
+                                                            <code><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/string" target="_blank" >string</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>updateInvoiceDto</td>
+                                            <td>
+                                                            <code><a href="../classes/UpdateInvoiceDto.html" target="_self" >UpdateInvoiceDto</a></code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >any</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+            <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="logger"></a>
+                    <span class="name">
+                            <span class="modifier">Private</span>
+                            <span class="modifier">Readonly</span>
+                        <span ><b>logger</b></span>
+                        <a href="#logger"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>new Logger(InvoiceService.name)</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="14" class="link-to-prism">src/invoice/invoice.service.ts:14</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+    </div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import { Inject, Injectable, Logger } from &#x27;@nestjs/common&#x27;;
+import { ClientProxy, RpcException } from &#x27;@nestjs/microservices&#x27;;
+import * as cron from &#x27;node-cron&#x27;;
+
+import { AddProductDto, CreateInvoiceDto,RemoveProductDto,UpdateInvoiceDto } from &#x27;./dto&#x27;;
+import { PrismaService } from &#x27;src/prisma/prisma.service&#x27;;
+import { RpcResponse } from &#x27;src/common/model/rpc.model&#x27;;
+import { MS_PRODUCT } from &#x27;src/common/constants&#x27;;
+import { sendToMicroservice } from &#x27;src/common/utils&#x27;;
+
+
+@Injectable()
+export class InvoiceService {
+  private readonly logger &#x3D; new Logger(InvoiceService.name);
+  constructor(
+    private readonly prismaService: PrismaService,
+    @Inject(MS_PRODUCT) private readonly productClient: ClientProxy  
+  ){
+      // cada una hora se corre el proceso de limpieza de carritos
+      cron.schedule(&#x27;0 * * * *&#x27;, async () &#x3D;&gt; {
+      this.logger.log(&#x27;Ejecutando limpieza de carritos viejos...&#x27;);
+      await this.cleanOldCartItems();
+    });
+
+  }
+
+ async cleanOldCartItems(): Promise&lt;void&gt; {
+    try {
+      const threeDaysAgo &#x3D; new Date();
+      threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+
+      // Buscar Carritos que tengan mas de 3 dias
+      const oldItems &#x3D; await this.prismaService.invoice.findMany({
+        where: { createdAt: { lt: threeDaysAgo } , 
+          status: {
+            equals: &#x27;carrito&#x27;,
+            mode: &#x27;insensitive&#x27;, // Ignora mayúsculas y minúsculas
+          }},
+      });
+
+      if (oldItems.length &gt; 0) {
+        const ids &#x3D; oldItems.map((item) &#x3D;&gt; item.id);
+        await this.prismaService.invoice.deleteMany({
+          where: { id: { in: ids } },
+        });
+        this.logger.log(&#x60;Se eliminaron ${ids.length} carritos viejos.&#x60;);
+      } else {
+        this.logger.log(&#x27;No hay carritos viejos para limpiar.&#x27;);
+      }
+    } catch (err) {
+      this.logger.error(&#x27;Error limpiando carritos viejos&#x27;, err);
+    }
+  }
+
+
+  async create(createInvoice: CreateInvoiceDto) {
+    //si el campo status es &quot;carrito&quot;, controlar que el usuario ya no tenga un carrito creado
+    //ingorar mayusculas o minusculas
+    if (createInvoice.status &amp;&amp; createInvoice.status.toLowerCase() &#x3D;&#x3D;&#x3D; &#x27;carrito&#x27; ) {
+      const existingCart &#x3D; await this.prismaService.invoice.findFirst({
+        where: {
+          userId: createInvoice.userId,
+          status: {
+            equals: &#x27;carrito&#x27;,
+            mode: &#x27;insensitive&#x27;, // Ignora mayúsculas y minúsculas
+          },
+        },
+      });
+      if (existingCart) {
+        throw new RpcException({
+          error: &#x27;The user already has an active cart.&#x27;,
+          statusCode: 404,
+        } as RpcResponse);
+      }
+    }
+    return await this.prismaService.invoice.create({
+      data: {
+        ...createInvoice,
+        products: JSON.parse(JSON.stringify(createInvoice.products)), 
+      },
+    });
+  }
+
+  findAll() {
+        return this.prismaService.invoice.findMany();
+  }
+
+  findOne(id: string) {
+        return this.prismaService.invoice.findUnique({ where: { id } });
+  }
+
+  update(id: string, updateInvoiceDto: UpdateInvoiceDto) {
+        return this.prismaService.invoice.update({ 
+          where: { id }, 
+          data: {
+            ...updateInvoiceDto,
+            products: updateInvoiceDto.products ? JSON.parse(JSON.stringify(updateInvoiceDto.products)) : undefined,
+          } 
+        });
+  }
+
+  findUserInvoices(userId: number) {
+      console.log
+      return this.prismaService.invoice.findMany({ where: { userId } });
+  }
+
+  remove(id: string) {
+        return this.prismaService.invoice.delete({ where: { id } });
+  }
+
+  // ************** Metodos para el carrito ****************** //
+  // Agregar producto al carrito
+  async addProductToCart(id: string, addProduct: AddProductDto) {
+    //buscar que la factura exista y que sea un carrito
+    const cart &#x3D; await this.prismaService.invoice.findUnique(
+      { where: { id,     
+        status: {
+            equals: &#x27;carrito&#x27;,
+            mode: &#x27;insensitive&#x27;, // Ignora mayúsculas y minúsculas
+          },
+        } 
+      });
+    if (!cart) {
+      throw new RpcException({
+        error: &#x27;Cart not found.&#x27;,
+        statusCode: 404,
+      } as RpcResponse);
+    }
+
+    //agregar el producto al carrito
+    let productsArray: any[] &#x3D; [];
+    if (Array.isArray(cart.products)) {
+      productsArray &#x3D; cart.products;
+    } else if (cart.products) {
+      try {
+        productsArray &#x3D; JSON.parse(JSON.stringify(cart.products));
+        if (!Array.isArray(productsArray)) {
+          productsArray &#x3D; [];
+        }
+      } catch {
+        productsArray &#x3D; [];
+      }
+    }
+    const updatedProducts &#x3D; [...productsArray, addProduct];
+    const total &#x3D; await this.calculateTotal(updatedProducts); // Recalcular el total del carrito
+    return await this.prismaService.invoice.update({
+          where: { id },
+          data: { products: updatedProducts, total },
+        });
+  }
+
+  // Remover producto del carrito
+  async removeProductFromCart(id: string, removeProduct: RemoveProductDto) {
+    //buscar que la factura exista y que sea un carrito
+    return this.prismaService.invoice.findUnique(
+      { where: { id,     
+        status: {
+            equals: &#x27;carrito&#x27;,
+            mode: &#x27;insensitive&#x27;, // Ignora mayúsculas y minúsculas
+          },  
+        } 
+      }).then(async cart &#x3D;&gt; {
+        if (!cart) {
+          throw new RpcException({
+            error: &#x27;Cart not found.&#x27;,
+            statusCode: 404,
+          } as RpcResponse);
+        }
+        //remover el producto del carrito
+        let productsArray: any[] &#x3D; [];
+        if (Array.isArray(cart.products)) {
+          productsArray &#x3D; cart.products;
+        } else if (cart.products) {
+          try {
+            productsArray &#x3D; JSON.parse(JSON.stringify(cart.products));
+            if (!Array.isArray(productsArray)) {
+              productsArray &#x3D; [];
+            }
+          } catch {
+            productsArray &#x3D; [];
+          }
+        }
+        const updatedProducts &#x3D; productsArray.filter(p &#x3D;&gt; p.id !&#x3D;&#x3D; removeProduct.id);
+        const total &#x3D; await this.calculateTotal(updatedProducts); // Recalcular el total del carrito
+        return await this.prismaService.invoice.update({
+          where: { id },
+          data: { products: updatedProducts, total },
+        });
+      });
+  }
+
+  async getUserCart(userId: number) {
+    const cart &#x3D;  await this.prismaService.invoice.findFirst(
+      { where: { userId,     
+        status: {
+            equals: &#x27;carrito&#x27;,
+            mode: &#x27;insensitive&#x27;, // Ignora mayúsculas y minúsculas
+          },
+        } 
+      })
+    if (!cart) {
+      throw new RpcException({
+        error: &#x27;Cart not found.&#x27;,
+        statusCode: 404,
+      } as RpcResponse);
+    }
+    return cart;
+
+  }
+
+  createUserCart(userId:number){
+    console.log(userId)
+    const newCart &#x3D; {
+        &quot;userId&quot;: userId,
+        &quot;products&quot;: [],
+        &quot;total&quot;: 0,
+        &quot;status&quot;: &quot;Carrito&quot;,
+    }
+    console.log(newCart)
+    return this.create(newCart);
+  }
+
+  async finalizeUserCart(userId: number) {
+    return await this.prismaService.invoice.findFirst(
+      { where: { userId,     
+        status: {
+            equals: &#x27;carrito&#x27;,
+            mode: &#x27;insensitive&#x27;, // Ignora mayúsculas y minúsculas
+          },
+        } 
+      }).then(
+        async cart &#x3D;&gt; {
+        if (!cart) {
+          throw new RpcException({
+            error: &#x27;Cart not found.&#x27;,
+            statusCode: 404,
+          } as RpcResponse);
+        }
+
+        // Decrementar el stock de cada producto en el carrito
+        if (Array.isArray(cart.products)) {
+          const productUpdates &#x3D; cart.products
+            .filter((product: any) &#x3D;&gt; product &amp;&amp; typeof product.id &#x3D;&#x3D;&#x3D; &#x27;number&#x27; &amp;&amp; typeof product.quantity &#x3D;&#x3D;&#x3D; &#x27;number&#x27;)
+            .map((product: any) &#x3D;&gt; {
+              const payload &#x3D; {
+                id: product.id,
+                quantity: product.quantity
+              };
+              // Llama al microservicio de productos para decrementar el stock
+              return sendToMicroservice(this.productClient, { products: &#x27;updateStock&#x27; }, payload);
+          });
+
+          await Promise.all(productUpdates);
+        }
+
+        //Finalizar Carrito
+        return await this.prismaService.invoice.update({
+          where: { id:cart.id },
+          data: { status: &quot;Aprobado&quot;, },
+        });
+      });
+  }
+
+
+  //crear una funcion que dada una lista de productos calcule el total como la suma de los precios por cantidad
+  private async calculateTotal(products: any[]): Promise&lt;number&gt; {
+    let total &#x3D; 0;
+    if (Array.isArray(products)) {
+      for (const product of products) {
+        if (product.price &amp;&amp; product.quantity) {
+          total +&#x3D; product.price * product.quantity;
+        }
+      }
+    }
+    return total;
+  }
+
+}
+</code></pre>
+    </div>
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'injectable';
+            var COMPODOC_CURRENT_PAGE_URL = 'InvoiceService.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
