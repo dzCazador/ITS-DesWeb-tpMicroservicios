@@ -89,11 +89,15 @@ Cada microservicio debe iniciarse **por separado** siguiendo los pasos:
 ## 🐳**Instalación y configuración (con Docker)**
 
 Cada microservicio también está dockerizado. Para levantar todo el entorno:
+
 **1.** Asegúrate de tener Docker y Docker Compose instalados.
+
 **2.** En la raíz del proyecto, ejecutar:
+
    ```bash
    docker-compose up --build
    ```
+
 **3.** Esto levantará los servicios:
 Gateway
 Users (PostgreSQL)
