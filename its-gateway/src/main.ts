@@ -25,6 +25,13 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
 
+  // Habilitar CORS
+  app.enableCors({
+    origin: 'http://localhost:4200', // Reemplaza con la URL de tu frontend de Angular
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
   await app.listen(envs.PORT);
