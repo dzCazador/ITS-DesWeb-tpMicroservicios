@@ -1,103 +1,164 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# ITS Desarrollo Web - Proyecto Final Microservicios
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 👥 Integrantes del Proyecto
+- **Testaseca Cristian**
+- **Caporaso Manuel**
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Este es el trabajo práctico evaluativo de la materia **Desarrollo Web** de la **Tecnicatura en Desarrollo de Software** del **Instituto Técnico Superior Cipolletti**. 
+El proyecto se desarrolló con una **arquitectura de microservicios**, donde cada servicio se levanta de manera independiente y se comunica con el **Gateway** para la autenticación y coordinación de datos.
 
-## Description
+Cada microservicio tiene su propia base de datos y ORM configurado según la necesidad:
 
-To see project documentation run.
-```bash
-$ npx @compodoc/compodoc -p tsconfig.json -s
-```
+- **Usuarios** → Prisma ORM con **PostgreSQL**  
+- **Productos** → TypeORM con **MySQL**  
+- **Facturas** → Prisma ORM con **MongoDB**
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Se implementó autenticación con **JWT**, **Passport** y **Guards**, además de comunicación entre microservicios para operaciones como facturación, carritos de usuarios y gestión de stock.
 
-## Project setup
+---
 
-```bash
-$ npm install
-```
+## 📌 Requisitos previos
 
-## Compile and run the project
+**Asegurarse de tener instalados:**
 
-```bash
-# development
-$ npm run start
+- [Node.js](https://nodejs.org) (versión 16 o superior)  
+- [Git](https://git-scm.com/)  
+- Sistemas gestores de bases de datos:  
+  - **PostgreSQL** (para Usuarios)  
+  - **MySQL** (para Productos)  
+  - **MongoDB** (para Facturas)  
+- [Docker](https://www.docker.com/) y Docker Compose (opcional, para levantar todo con contenedores)  
 
-# watch mode
-$ npm run start:dev
+---
 
-# production mode
-$ npm run start:prod
-```
+## ⚙️ Instalación y configuración (sin Docker)
 
-## Run tests
+Cada microservicio debe iniciarse **por separado** siguiendo los pasos:
 
-```bash
-# unit tests
-$ npm run test
+1. **Clonar el repositorio**
+   ```bash
+   git clone <URL_REPOSITORIO>
+   cd <CARPETA_DEL_PROYECTO>
 
-# e2e tests
-$ npm run test:e2e
+2. **Ingresar en el microservicio deseado**  
+   Ingresá al directorio del proyecto y ejecuta:  
+   ```bash
+    cd usuarios   # o productos / facturas / gateway
+    ```
+   
+3. **Instalar las dependencias**  
+   Ingresá al directorio del proyecto y ejecuta:  
+   ```bash
+   npm install
+   ```
 
-# test coverage
-$ npm run test:cov
-```
+4. **Configurar las variables de entorno**  
+   Creá un archivo `.env` en la raíz del proyecto basándote en el archivo `.env_template`.  
+   Asegurate de reemplazar los valores con la configuración de tu base de datos.
 
-## Deployment
+5. **Migracion de bases de datos**  
+   Aplicá la última versión de las migraciones con los siguiente comandos:
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+   *USUARIOS  
+   ```bash
+   npx prisma migrate dev --name <NOMBRE_MIGRACION> y luego
+   npx prima generate
+   ```
+   
+   *PRODUCTOS  
+   ```bash
+   Para inicializar la base de datos de productos, es necesario habilitar en el archivo de configuración de TypeORM
+   synchronize: true
+   Esto creará automáticamente las tablas al inicio.
+   IMPORTANTE: una vez generadas, cambiarlo a:
+   synchronize: false
+   
+   ```
+   *FACTURAS  
+   ```bash
+   npx prisma migrate dev --name <NOMBRE_MIGRACION> y luego
+   npx prima generate
+   ```
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+7. **Iniciar cada microservicion**  
+   Ejecutá el siguiente comando para iniciar la aplicación en modo desarrollo:  
+   ```bash
+   nest run start
+   ```
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+## 🐳**Instalación y configuración (con Docker)**
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Cada microservicio también está dockerizado. Para levantar todo el entorno:
 
-## Resources
+**1.** Asegúrate de tener Docker y Docker Compose instalados.
 
-Check out a few resources that may come in handy when working with NestJS:
+**2.** En la raíz del proyecto, ejecutar:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+   ```bash
+   docker-compose up --build
+   ```
 
-## Support
+**3.** Esto levantará los servicios:
+Gateway
+Users (PostgreSQL)
+Products (MySQL)
+Invoice (MongoDB)
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+**4.** Las variables de entorno están definidas en los archivos .env.template de cada microservicio y/o en docker-compose.yml.
 
-## Stay in touch
+## 📖 **Documentación**
+Cada microservicio cuenta con documentación accesible de dos formas:
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+**Swagger** → Endpoints interactivos:
 
-## License
+   Una vez que la aplicación esté en ejecución, abrí tu navegador y accede a:  
+   ```
+   http://localhost:3000/api
+   ```
+   Aca vas a encontrar la documentación interactiva generada con **Swagger**, que describe todas las rutas disponibles.
+   
+**Compodoc** → Documentación técnica del proyecto:
+Generar con:
+   ```
+   npm run compodoc
+  npm run compodoc:serve
+   ```
+## 🚀 **Funcionalidades principales**
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Autenticación centralizada en el Gateway (JWT, Passport, Guards).
+
+Comunicación entre microservicios (ejemplo: facturas enlazadas con usuarios).
+
+Gestión de carritos reutilizando la entidad Factura (Invoice):
+En lugar de crear una nueva entidad Cart, se utiliza la misma entidad Invoice, diferenciada por el campo status.
+Cuando un usuario agrega productos, se genera una Invoice con status = "carrito".
+Al finalizar la compra, el status cambia a "aprobada", convirtiéndose en una factura real.
+
+Gestión de productos con stock y relación con usuarios mediante carritos/facturas.
+
+CRUD básicos: creación, consulta, edición (sin eliminación física).
+
+Buenas prácticas de programación (SOLID, manejo de errores).
+
+Limpieza de carritos automática con node-cron si superan los 3 días de inactividad.
+
+## 🛠️ **Tecnologías utilizadas**
+
+**Node.js** - Entorno de ejecución
+
+**NestJS** - Framework principal
+
+**Prisma ORM** - Usuarios (PostgreSQL) y Facturas (MongoDB)
+
+**TypeORM** - Productos (MySQL)
+
+**Swagger** - Documentación de rutas
+
+**Compodoc** - Documentación técnica
+
+**JWT / Passport / Guards** - Autenticación y autorización
+
+**Node-cron** - Automatización de limpieza de carritos
+
+**Docker & Docker Compose** - Contenerización de servicios
+
