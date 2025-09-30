@@ -1,3 +1,4 @@
+import { invoice } from './../../generated/prisma/index.d';
 import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import * as cron from 'node-cron';
@@ -24,6 +25,11 @@ export class InvoiceService {
 
   }
 
+  /**
+   * Clean old carts from the database. Every hour, this method is called
+   * to remove all carts that are older than 3 days.
+   * @returns {Promise<void>} A promise that resolves when the method is completed.
+   */
  async cleanOldCartItems(): Promise<void> {
     try {
       const threeDaysAgo = new Date();
@@ -53,6 +59,14 @@ export class InvoiceService {
   }
 
 
+/**
+ * Creates a new invoice in the database.
+ * If the status is "carrito", checks that the user does not already have an active cart.
+ * Ignores case when checking the status.
+ * @param {CreateInvoiceDto} createInvoice - The invoice to be created.
+ * @returns {Promise<Invoice>} A promise that resolves to the created invoice.
+ * @throws {RpcException} If the user already has an active cart.
+ */
   async create(createInvoice: CreateInvoiceDto) {
     //si el campo status es "carrito", controlar que el usuario ya no tenga un carrito creado
     //ingorar mayusculas o minusculas
@@ -81,16 +95,42 @@ export class InvoiceService {
     });
   }
 
-  findAll() {
-        return this.prismaService.invoice.findMany();
+/**
+ * Finds all invoices in the database.
+ * @returns {Promise<Invoice[]>} A promise that resolves to an array of invoices.
+ */
+  async findAll() {
+      const invoices = await this.prismaService.invoice.findMany();
+      return invoices;
   }
 
-  findOne(id: string) {
-        return this.prismaService.invoice.findUnique({ where: { id } });
+
+  /**
+   * Finds an invoice by its id.
+   * @param id The id of the invoice to find.
+   * @returns A promise that resolves to the found invoice.
+   * @throws RpcException If the invoice is not found.
+   */
+
+  /**
+   * Finds an invoice by its id.
+   * @param id The id of the invoice to find.
+   * @returns A promise that resolves to the found invoice.
+   * @throws RpcException If the invoice is not found.
+   */
+  async findOne(id: string) {
+        return await this.prismaService.invoice.findUnique({ where: { id } });
   }
 
-  update(id: string, updateInvoiceDto: UpdateInvoiceDto) {
-        return this.prismaService.invoice.update({ 
+  /**
+   * Updates an invoice by its id.
+   * @param id The id of the invoice to update.
+   * @param updateInvoiceDto The data to update the invoice with.
+   * @returns A promise that resolves to the updated invoice.
+   * @throws RpcException If the invoice is not found.
+   */
+  async update(id: string, updateInvoiceDto: UpdateInvoiceDto) {
+        return await this.prismaService.invoice.update({ 
           where: { id }, 
           data: {
             ...updateInvoiceDto,
@@ -99,12 +139,12 @@ export class InvoiceService {
         });
   }
 
-  findUserInvoices(userId: number) {
-      return this.prismaService.invoice.findMany({ where: { userId } });
+  async findUserInvoices(userId: number) {
+      return await this.prismaService.invoice.findMany({ where: { userId } });
   }
 
-  remove(id: string) {
-        return this.prismaService.invoice.delete({ where: { id } });
+  async remove(id: string) {
+        return await this.prismaService.invoice.delete({ where: { id } });
   }
 
   // ************** Metodos para el carrito ****************** //
@@ -140,12 +180,29 @@ export class InvoiceService {
         productsArray = [];
       }
     }
-    const updatedProducts = [...productsArray, addProduct];
-    const total = await this.calculateTotal(updatedProducts); // Recalcular el total del carrito
-    return await this.prismaService.invoice.update({
-          where: { id },
-          data: { products: updatedProducts, total },
-        });
+
+    const product = await this.completeAddProduct(addProduct);
+    // Actualiza el array de productos y el total
+    const updatedProducts = [...productsArray, product];
+    const total = this.calculateTotal(updatedProducts);    
+
+    
+    const updatedCart = await this.prismaService.invoice.update({
+        where: { id },
+        data: { products: updatedProducts, total },
+    });
+
+    return updatedCart;
+  }
+
+  private async  completeAddProduct(addProduct: AddProductDto): Promise<any> {
+    const product = await sendToMicroservice(this.productClient, { products: 'findOne' }, addProduct.id)
+          .catch((error) => {
+          this.logger.warn(`Error al obtener producto ${addProduct.id}: ${error.message}`);
+          // Retorna el producto con un nombre de fallback y sus datos originales
+          return { name: 'Producto no disponible', ...addProduct };
+        })
+    return { ...addProduct, name: product.name };
   }
 
   // Remover producto del carrito
@@ -260,7 +317,7 @@ export class InvoiceService {
 
 
   //crear una funcion que dada una lista de productos calcule el total como la suma de los precios por cantidad
-  private async calculateTotal(products: any[]): Promise<number> {
+  private calculateTotal(products: any[]): number {
     let total = 0;
     if (Array.isArray(products)) {
       for (const product of products) {

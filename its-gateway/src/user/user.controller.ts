@@ -25,7 +25,7 @@ export class UserController {
     return sendToMicroservice(this.userClient, { users: 'create' }, { newUser });
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Get(':id')
   @ApiOperation({ summary: 'Obtener usuario por ID' })
   @ApiParam({ name: 'id', type: Number })
@@ -35,10 +35,9 @@ export class UserController {
     return sendToMicroservice(this.userClient, { users: 'findOne' }, id);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Get()
   @Roles(Role.ADMIN) 
-  @UseGuards(RolesGuard)
   @ApiOperation({ summary: 'Obtener todos los Usuarios' })
   @ApiResponse({ status: 200, description: 'Usuarios encontrados' })
   @ApiResponse({ status: 404, description: 'Usuarios no encontrados' })
@@ -46,10 +45,9 @@ export class UserController {
     return sendToMicroservice(this.userClient, { users: 'findAll' }, {});
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Patch(':id')
   @Roles(Role.ADMIN) 
-  @UseGuards(RolesGuard)
   @ApiOperation({ summary: 'Actualizar Usuario' })
   @ApiResponse({ status: 200, description: 'Usuario Actualizado' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
@@ -58,10 +56,9 @@ export class UserController {
     return sendToMicroservice(this.userClient, { users: 'update' }, { id, updateUser });
   }
 
-  @UseGuards(AuthGuard('jwt'))
+   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Delete(':id')
   @Roles(Role.ADMIN) 
-  @UseGuards(RolesGuard)  
   @ApiOperation({ summary: 'Eliminar Usuario' })
   @ApiResponse({ status: 200, description: 'Usuario Eliminado' }) 
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })

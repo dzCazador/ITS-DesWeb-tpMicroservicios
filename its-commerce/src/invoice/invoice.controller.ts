@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Inject } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { InvoiceService } from './invoice.service';
 import { CreateInvoiceDto,UpdateInvoiceDto, AddProductDto, RemoveProductDto } from './dto';
@@ -21,7 +21,6 @@ export class InvoiceController {
 
   @MessagePattern({invoices: 'findUserInvoices'})
   findUserInvoices(@Payload() userId: number) {
-    console.log("User ID from token:", userId);
     return this.invoiceService.findUserInvoices(userId);
   }
 

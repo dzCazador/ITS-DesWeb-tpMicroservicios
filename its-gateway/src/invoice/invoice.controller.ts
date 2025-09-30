@@ -54,7 +54,7 @@ export class InvoiceController {
 
   @Get(':id')
   @Roles(Role.ADMIN) 
-  @UseGuards(RolesGuard)
+  @UseGuards(RolesGuard) 
   @ApiOperation({ summary: 'Obtener Factura por ID' })
   @ApiParam({ name: 'id', type: String })
   @ApiResponse({ status: 200, description: 'Factura encontrada' })
@@ -65,7 +65,6 @@ export class InvoiceController {
     if (!invoice) {
       throw new HttpException('Factura no encontrada', 404);
     }
-
     const [user, products] = await firstValueFrom(
       forkJoin([
         sendToMicroservice(this.userClient, { users: 'findOne' }, invoice.userId),
@@ -73,10 +72,10 @@ export class InvoiceController {
       ])
     );
 
-    const { sub, ...userWithoutSub } = user;
-    const { userId, ...invoiceWithoutUserId } = invoice;
+    const { name, ...userWithoutSub } = user;
+    invoice.userName = name;
 
-    return { ...invoiceWithoutUserId, user: userWithoutSub, products };
+    return invoice;
   }
 
   @Put(':id')
@@ -109,7 +108,8 @@ export class InvoiceController {
       return [];
     }
 
-    return Promise.all(invoices.map(async (invoice: { id: string }) => this.findById(invoice.id)));
+    //return Promise.all(invoices.map(async (invoice: { id: string }) => this.findById(invoice.id)));
+    return invoices
   }
 
   private async getProductsWithDetails(products: any[]): Promise<any[]> {
@@ -120,3 +120,4 @@ export class InvoiceController {
     return await Promise.all(productRequests);
   }
 }
+
