@@ -161,7 +161,7 @@ export class InvoiceService {
       });
     if (!cart) {
       throw new RpcException({
-        error: 'Cart not found.',
+        error: 'Cart not found...',
         statusCode: 404,
       } as RpcResponse);
     }
@@ -246,19 +246,21 @@ export class InvoiceService {
   }
 
   async getUserCart(userId: number) {
-    const cart =  await this.prismaService.invoice.findFirst(
+    let cart =  await this.prismaService.invoice.findFirst(
       { where: { userId,     
         status: {
             equals: 'carrito',
-            mode: 'insensitive', // Ignora mayúsculas y minúsculas
+            mode: 'insensitive', 
           },
         } 
       })
+    //si no encuentra el carrito, crear uno
     if (!cart) {
-      throw new RpcException({
+      /*throw new RpcException({
         error: 'Cart not found.',
         statusCode: 404,
-      } as RpcResponse);
+      } as RpcResponse);*/
+      cart = await this.createUserCart(userId);
     }
     return cart;
 
@@ -269,7 +271,7 @@ export class InvoiceService {
         "userId": userId,
         "products": [],
         "total": 0,
-        "status": "Carrito",
+        "status": "carrito",
     }
     return this.create(newCart);
   }
@@ -286,7 +288,7 @@ export class InvoiceService {
         async cart => {
         if (!cart) {
           throw new RpcException({
-            error: 'Cart not found.',
+            error: 'Cart not found..',
             statusCode: 404,
           } as RpcResponse);
         }
